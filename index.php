@@ -1,5 +1,5 @@
 <?php
-$passwordHash = '';
+$passwordHash = 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3';
 // --------------------------------------------------------
 // DO NOT TOUCH THE FIRST TWO LINES.
 
@@ -244,7 +244,7 @@ function upload($fileName, $tempFile)
 
 $page = (!empty($_GET)) ? array_keys($_GET)[0] : null;
 
-if (strlen($page) == $length)
+if (strlen($page) > 3)
 {
     $db = unserialize(file_get_contents($database));
 
@@ -361,7 +361,7 @@ else
 
         default:
 
-            $accessString = 'http' . (($_SERVER['HTTPS'] == 'on') ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'] . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '@' . $passwordHash;
+            $accessString = $_SERVER['HTTP_HOST'] . '|' . $_SERVER['SERVER_PORT'] . '|' . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '|' . $passwordHash;
 
             $output = str_replace('{CONTENT}',
                 $loggedIn ? str_replace('{ACCESS_STRING}', $accessString, $template['upload'])
