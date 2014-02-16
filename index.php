@@ -311,7 +311,7 @@ else
                 {
                     $tmp = tempnam(sys_get_temp_dir(), $json['hash']);
                     file_put_contents($tmp, $json['data']);
-                    $response['url'] = upload($json['name'], $tmp);
+                    $response['url'] = upload($json['name'], $tmp)['url'];
                     unlink($tmp);
                 }
                 else
