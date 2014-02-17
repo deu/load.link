@@ -1,44 +1,89 @@
 <?php
-$passwordHash = '';
+$passwordHash = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'; // For now it stays like this because it's a pain to delete it every time I push it. The password is "test". Feel free to delete the hash and try installing it.
 // --------------------------------------------------------
 // DO NOT TOUCH THE FIRST TWO LINES.
 
 
-$path = '.';
-$database = '.db';
-
-$length = 6; // must be longer than 3 characters.
-$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-
-session_start();
-#session_unset();
-
-$loggedIn = isset($_SESSION['passwordHash']) && $_SESSION['passwordHash'] === $passwordHash ? true : false;
+// Optional configuration:
+$uploadDir      = '.';
+$databasePath   = '.db';
+$idLength       = 6; // must be longer than 3 characters.
+$idCharacters   = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+$sameNameSuffix = '.1';
+$https          = false;
 
 
-/* template[login] {{{ */
-$template['login'] = <<<'HTML'
+// Here be dragons:
+
+class Config
+{
+    public static function __callStatic($methodName, $methodArgs)
+    {
+        if (substr($methodName, 0, 3) == 'get')
+        {
+            return $GLOBALS[lcfirst(substr($methodName, 3))];
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+class Template
+{
+    protected $templates = array(
+        'global' => <<<'HTML'
+<!DOCTYPE HTML>
+<html>
+    <head>
+{HEADERS}
+    </head>
+    <body>
+        <div id="contents">
+{CONTENT}
+        </div>
+    </body>
+</html>
+HTML
+    ,
+
+    'logo' => <<<'HTML'
+            <div id="logo">load<span class="gray">link</span></div>
+HTML
+    ,
+
+    'defaultHeaders' => <<<'HTML'
+        <meta charset="UTF-8">
+        <title>load.link</title>
+        <link rel="stylesheet" type="text/css" href="?css">
+HTML
+    ,
+
+    'metaRefresh' => <<<'HTML'
+        <meta http-equiv="refresh" content="0; url={URL}" />
+HTML
+    ,
+
+    'loginForm' => <<<'HTML'
             <form id="login" method="post" action="?lgn">
                 <input id="password" type="password" name="password" placeholder="password">
                 <br />
                 <button class="submitButton" type="submit">login</button>
             </form>
-HTML;
-/* }}} */
+HTML
+    ,
 
-/* template[installer] {{{ */
-$template['installer'] = <<<'HTML'
+    'installForm' => <<<'HTML'
             <form id="login" method="post" action="?ins">
                 <input id="password" type="password" name="password" placeholder="choose a password">
                 <br />
                 <button class="submitButton" type="submit">install</button>
             </form>
-HTML;
-/* }}} */
+HTML
+    ,
 
-/* template[upload] {{{ */
-$template['upload'] = <<<'HTML'
+    'uploadForm' => <<<'HTML'
             <form id="upload" method="post" action="?l" enctype="multipart/form-data">
                 <input id="fileHidden" type="file" name="file" onchange="javascript: document.getElementById('fileName').value = this.value">
                 <input id="fileName" type="text" name="fileName" placeholder="select file">
@@ -46,64 +91,18 @@ $template['upload'] = <<<'HTML'
                 <button class="submitButton" type="submit"><span class="gray">up</span>load</button>
             </form>
             <a id="accessString" href="#" onclick="window.prompt('Copy the following string: (CTRL/CMD+C)', '{ACCESS_STRING}');">Click here and copy the access string to the load.link app.</a>
-HTML;
-/* }}} */
+HTML
+    ,
 
-/* template[link] {{{ */
-$template['link'] = <<<'HTML'
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>load.link</title>
-    </head>
-    <body>
-        <div style="text-align: center;">
-            Link to uploaded content:<br /><br />
-            <a href="{LINK}">{LINK}</a>
-        </div>
-    </body>
-</html>
+    'linkToUploadedFile' => <<<'HTML'
+            <div id="link">
+                Link to uploaded content:<br /><br />
+                <a href="{URL}">{URL}</a>
+            </div>
+HTML
+    ,
 
-HTML;
-/* }}} */
-
-/* template[global] {{{ */
-$template['global'] = <<<'HTML'
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>load.link</title>
-        <link rel="stylesheet" href="?css">
-    </head>
-    <body>
-        <div id="contents">
-            <div id="logo">load<span class="gray">link</span></div>
-            {CONTENT}
-        </div>
-    </body>
-</html>
-HTML;
-/* }}} */
-
-/* template[redirect] {{{ */
-$template['redirect'] = <<<'HTML'
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>load.link</title>
-        <meta http-equiv="refresh" content="0; url={URL}" />
-    </head>
-    <body>
-    </body>
-</html>
-HTML;
-/* }}} */
-
-/* template[css] {{{ */
-$template['css'] = <<<'CSS'
+    'css' => <<<'CSS'
 @charset "UTF-8";
 * {
     margin: 0;
@@ -190,186 +189,456 @@ BUTTON .gray {
 #accessString:hover {
     color: #555555;
 }
-CSS;
-/* }}} */
-
-function upload($fileName, $tempFile)
-{
-    global $database, $length, $characters, $path;
-
-    if (!file_exists($database))
-    {
-        fopen($database, 'w');
-        $db = array();
-        file_put_contents($database, serialize($db));
-    }
-
-    $db = unserialize(file_get_contents($database));
-
-    do
-    {
-        $random = '';
-        for ($i = 0; $i < $length; $i++)
-        {
-            $random .= $characters[rand(0, strlen($characters) - 1)];
-        }
-    }
-    while (in_array($random, array_keys($db)));
-
-    $name = $fileName;
-
-    if (file_exists($path . '/' . $fileName))
-    {
-        $fileName .= '.1';
-    }
-
-    move_uploaded_file($tempFile, $path . '/' . $fileName);
-
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, $path . '/' . $fileName);
-    finfo_close($finfo);
-
-    $db[$random] = array(
-        'name' => $name,
-        'fileName' => $fileName,
-        'mime' => $mime);
-
-    file_put_contents($database, serialize($db));
-
-    return array(
-        'url' => 'http://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 80 ? ':' . $_SERVER['SERVER_PORT'] : '') . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '?' . $random,
-        'mime' => $mime
+#link {
+    padding-top: 65px;
+    font-size: 14px;
+    color: #555555;
+}
+#link A {
+    color: #000000;
+    text-decoration: none;
+}
+#link A:hover {
+    text-decoration: underline;
+}
+CSS
     );
+
+    protected $template;
+    protected $buffer;
+
+    public function __construct($template)
+    {
+        $this->template = $template;
+
+        if ($this->template == 'css')
+        {
+            $this->buffer = $this->templates['css'];
+
+            return $this;
+        }
+
+        $this->buffer = $this->templates['global'];
+
+        if ($this->template == 'redirect')
+        {
+            $this->replace('HEADERS', $this->templates['metaRefresh']);
+            $this->replace('CONTENT', '');
+
+            return $this;
+        }
+
+        $this->replace('HEADERS', $this->templates['defaultHeaders']);
+        $this->replace('CONTENT', $this->templates['logo'] . "\n" . '{CONTENT}');
+
+        switch ($this->template)
+        {
+            case 'installer':
+
+                $this->replace('CONTENT', $this->templates['installForm']);
+
+                break;
+
+            case 'uploader':
+
+                $this->replace('CONTENT', $this->templates['uploadForm']);
+
+                break;
+
+            case 'login':
+
+                $this->replace('CONTENT', $this->templates['loginForm']);
+
+                break;
+
+            case 'link':
+
+                $this->replace('CONTENT', $this->templates['linkToUploadedFile']);
+
+                break;
+        }
+
+        return $this;
+    }
+
+    protected function replace($search, $replace)
+    {
+        $this->buffer = str_replace('{' . $search . '}', $replace, $this->buffer);
+    }
+
+    public function with($search, $replace)
+    {
+        $this->replace($search, $replace);
+
+        return $this;
+    }
+
+    public function getRaw()
+    {
+        return $this->templates[$this->template];
+    }
+
+    public function get()
+    {
+        return $this->buffer;
+    }
 }
 
-$page = (!empty($_GET)) ? array_keys($_GET)[0] : null;
-
-if (strlen($page) > 3)
+class Uploader
 {
-    $db = unserialize(file_get_contents($database));
+    protected $db;
+    protected $tmpFilePath;
+    protected $fileName;
+    protected $filePath;
+    protected $fileMimeType;
+    protected $id;
 
-    if (array_key_exists($page, $db) && file_exists($path . '/' . $db[$page]['fileName']))
+    public function getFileName()
     {
-        $name     = $db[$page]['name'];
-        $filePath = $path . '/' . $db[$page]['fileName'];
-        $mime     = $db[$page]['mime'];
-
-        header('Content-Type: ' . $mime);
-        header('Content-Disposition: ' . (in_array(substr($mime, 0, strpos($mime, '/')), array('text', 'image')) ? 'inline' : 'attachment') . '; filename=' . $name);
-        header('Content-Length: ' . filesize($filePath));
-
-        $output = file_get_contents($filePath);
+        return $this->fileName;
     }
-    else
+
+    public function getFileMimeType()
     {
-        $output = ''; // TODO: Error pages. Well, actually, error handling in general.
+        return $this->fileMimeType;
+    }
+
+    public function __construct($fileName, $tmpFilePath)
+    {
+        $this->db           = $this->getDB();
+        $this->tmpFilePath  = $tmpFilePath;
+        $this->fileName     = $fileName;
+        $this->filePath     = $this->getFilePath();
+        $this->fileMimeType = self::detectFileMimeType($tmpFilePath);
+
+        return $this;
+    }
+
+    protected function getFilePath()
+    {
+        $filePath = Config::getUploadDir() . '/' . $this->fileName;
+
+        if (file_exists($filePath))
+        {
+            $filePath .= Config::getSameNameSuffix();
+        }
+
+        return $filePath;
+    }
+
+    protected static function detectFileMimeType($filePath)
+    {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $filePath);
+        finfo_close($finfo);
+
+        return $mimeType;
+    }
+
+    protected function getDB()
+    {
+        $databasePath = Config::getDatabasePath();
+
+        if (!file_exists($databasePath))
+        {
+            fopen($databasePath, 'w');
+            $db = array();
+            file_put_contents($databasePath, serialize($db));
+        }
+
+        return unserialize(file_get_contents($databasePath));
+    }
+
+    protected function generateUniqueId()
+    {
+        $characters = Config::getIdCharacters();
+
+        do
+        {
+            $id = '';
+            for ($i = 0; $i < Config::getIdLength(); $i++)
+            {
+                $id .= $characters[rand(0, strlen($characters) - 1)];
+            }
+        }
+        while (in_array($id, array_keys($this->db)));
+
+        return $id;
+    }
+
+    protected function addToDB()
+    {
+        $this->id = $this->generateUniqueId();
+
+        $this->db[$this->id] = array(
+            'fileName'     => $this->fileName,
+            'filePath'     => $this->filePath,
+            'fileMimeType' => $this->fileMimeType);
+
+        file_put_contents(Config::getDatabasePath(), serialize($this->db));
+    }
+
+    public function upload()
+    {
+        move_uploaded_file($this->tmpFilePath, $this->filePath);
+        $this->addToDB();
+
+        return $this;
+    }
+
+    public function getURL()
+    {
+        return 'http' . (Config::getHttps() ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . (!in_array($_SERVER['SERVER_PORT'], array(80, 443)) ? ':' . $_SERVER['SERVER_PORT'] : '') . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '?' . $this->id;
     }
 }
-else
+
+class JsonApi
 {
-    switch($page)
+    protected $headers;
+    protected $filePath;
+    protected $response;
+
+    public function __construct()
     {
-        case 'ins':
+        $this->headers  = json_decode(file_get_contents($_FILES['headers']['tmp_name']), true);
+        $this->filePath = $_FILES['data']['tmp_name'];
 
-            if ($passwordHash == '')
-            {
-                $password = $_SESSION['passwordHash'] = sha1($_POST['password']);
-                $loggedIn = true;
+        $this->headers['error'] = null;
 
-                $file = file(__FILE__);
-                $file[1] = '$passwordHash = \'' . $password . '\';' . "\n";
-                file_put_contents(__FILE__, implode('', $file));
+        if ($this->headers['passwordHash'] !== Config::getPasswordHash())
+        {
+            $this->response['error'] = 'ACCESS DENIED';
+            return $this;
+        }
 
-                $_SESSION['passwordHash'] = $password;
-                $loggedIn = true;
+        if ($this->headers['fileHash'] !== hash('sha512', file_get_contents($this->filePath)))
+        {
+            $this->response['error'] = 'WRONG FILE HASH';
+        }
 
-                $output = str_replace('{URL}', '?', $template['redirect']);
-            }
-            else
-            {
-                $output = '';
-            }
+        return $this;
+    }
 
-            break;
+    public function upload()
+    {
+        if (!$this->headers['error'])
+        {
+            $u = new Uploader($this->headers['fileName'], $this->filePath);
+            $u->upload();
+            $this->response['url'] = $u->getURL();
+        }
 
-        case 'css':
+        return $this;
+    }
 
-            $output = $template['css'];
-            header('Content-Type: text/css');
+    public function getResponse()
+    {
+        return json_encode($this->response);
+    }
+}
 
-            break;
+class Installer
+{
+    public static function isAlreadyInstalled()
+    {
+        return (Config::getPasswordHash() != '') ? true : false;
+    }
 
-        case 'j':
+    public static function install()
+    {
+        $ph = $_SESSION['passwordHash'] = hash('sha512', ($_POST['password']));
 
-            $headers = json_decode(file_get_contents($_FILES['headers']['tmp_name']));
+        $thisFile = file(__FILE__);
+        $thisFile[1] = '$passwordHash = \'' . $ph . '\';' . "\n";
+        file_put_contents(__FILE__, implode('', $thisFile));
+    }
+}
 
-            if ($headers->{'passwordHash'} === $passwordHash)
-            {
-                if ($headers->{'fileHash'} === md5(file_get_contents($_FILES['data']['tmp_name'])))
+class Page
+{
+    protected $headers;
+    protected $buffer;
+    protected $page;
+
+    public function __construct()
+    {
+        $this->headers = array();
+        $this->page    = self::getPage();
+
+        session_start();
+
+        switch ($this->page)
+        {
+            case 'css':
+
+                $this->headers[] = 'Content-Type: text/css';
+
+                $t = new Template('css');
+                $this->buffer = $t
+                    ->getRaw();
+
+                return $this;
+
+            case 'ins':
+
+                if (!Installer::isAlreadyInstalled())
                 {
-                    $response['url'] = upload($headers->{'fileName'} , $_FILES['data']['tmp_name'])['url'];
+                    Installer::install();
+
+                    $t = new Template('redirect');
+                    $this->buffer = $t
+                        ->with('URL', '?')
+                        ->get();
                 }
                 else
                 {
-                    $response['error'] = 'WRONG FILE HASH';
+                    $this->buffer = 'ACCESS DENIED';
                 }
-            }
-            else
-            {
-                $response['error'] = 'ACCESS DENIED';
-            }
 
-            header('Content-Type: application/json');
-            $output = json_encode($response);
+                return $this;
 
-            break;
+            case 'lgn':
 
-        case 'l':
+                if (isset($_POST['password'])
+                    && (hash('sha512', $_POST['password'])) === Config::getPasswordHash())
+                {
+                    $_SESSION['passwordHash'] = hash('sha512', $_POST['password']);
+                }
 
-            $uploadedFile = upload($_FILES["file"]["name"], $_FILES["file"]["tmp_name"]);
+                $t = new Template('redirect');
+                $this->buffer = $t
+                    ->with('URL', '?')
+                    ->get();
 
-            $mime = $uploadedFile['mime'];
-            if (in_array(substr($mime, 0, strpos($mime, '/')), array('text', 'image')))
-            {
-                $output = str_replace('{URL}', $uploadedFile['url'], $template['redirect']);
-            }
-            else
-            {
-                $output = str_replace('{LINK}', $uploadedFile['url'], $template['link']);
-            }
+                return $this;
 
-            /* TODO: Function to clear unused URLs, possibly at the user's request. */
+            case 'lgt':
 
-            break;
+                unset($_SESSION['passwordHash']);
+                session_destroy();
 
-        case 'lgn':
+                $t = new Template('redirect');
+                $this->buffer = $t
+                    ->with('URL', '?')
+                    ->get();
 
-            if (isset($_POST['password']) && sha1($_POST['password']) === $passwordHash)
-            {
-                $_SESSION['passwordHash'] = sha1($_POST['password']);
-                $loggedIn = true;
-            }
+                return $this;
 
-            $output = str_replace('{URL}', '?', $template['redirect']);
+            case 'l':
 
-            break;
+                $u = new Uploader($_FILES["file"]["name"], $_FILES["file"]["tmp_name"]);
+                $u->upload();
 
-        default:
+                if (in_array(substr($u->getFileMimeType(), 0, strpos($u->getFileMimeType(), '/')), array('text', 'image')))
+                {
+                    $t = new Template('redirect');
+                    $this->buffer = $t
+                        ->with('URL', $u->getURL())
+                        ->get();
+                }
+                else
+                {
+                    $t = new Template('link');
+                    $this->buffer = $t
+                        ->with('URL', $u->getURL())
+                        ->get();
+                }
 
-            $accessString = $_SERVER['HTTP_HOST'] . '|' . $_SERVER['SERVER_PORT'] . '|' . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '|' . $passwordHash;
+                return $this;
 
-            $output = str_replace('{CONTENT}',
-                $loggedIn ? str_replace('{ACCESS_STRING}', $accessString, $template['upload'])
-                    : $template['login'], $template['global']);
+                /* TODO: Function to clear unused URLs, possibly at the user's request. */
 
-            break;
+            case 'j':
+
+                $this->headers[] = 'Content-Type: application/json';
+
+                $j = new JsonApi();
+                $this->buffer = $j
+                    ->upload()
+                    ->getResponse();
+
+                return $this;
+
+            default:
+
+                if (strlen($this->page) > 3)
+                {
+                    $db = unserialize(file_get_contents(Config::getDatabasePath()));
+
+                    if (array_key_exists($this->page, $db)
+                        && file_exists($db[$this->page]['fileName']))
+                    {
+                        $contentDisposition = (in_array(substr($db[$this->page]['fileMimeType'], 0, strpos($db[$this->page]['fileMimeType'], '/')), array('text', 'image')) ? 'inline' : 'attachment') . '; filename=' . $db[$this->page]['fileName'];
+
+                        $this->headers = array_merge($this->headers, array(
+                            'Content-Type: ' . $db[$this->page]['fileMimeType'],
+                            'Content-Disposition: ' . $contentDisposition,
+                            'Content-Length: ' . filesize($db[$this->page]['filePath'])
+                        ));
+
+                        $this->buffer = file_get_contents($db[$this->page]['filePath']);
+
+                        return $this;
+                    }
+                    else
+                    {
+                        $this->headers[] = 'HTTP/1.1 404 Not Found';
+                        $this->buffer    = 'Not Found';
+
+                        return $this;
+                    }
+                }
+
+                elseif (!Installer::isAlreadyInstalled())
+                {
+                    $t = new Template('installer');
+                    $this->buffer = $t
+                        ->get();
+
+                    return $this;
+                }
+
+                else
+                {
+                    if (isset($_SESSION['passwordHash'])
+                        && $_SESSION['passwordHash'] === Config::getPasswordHash())
+                    {
+                        $accessString = $_SERVER['HTTP_HOST'] . '|' . $_SERVER['SERVER_PORT'] . '|' . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '|' . Config::getPasswordHash();
+
+                        $t = new Template('uploader');
+                        $this->buffer = $t
+                            ->with('ACCESS_STRING', $accessString)
+                            ->get();
+
+                        return $this;
+                    }
+                    else
+                    {
+                        $t = new Template('login');
+                        $this->buffer = $t
+                            ->get();
+
+                        return $this;
+                    }
+                }
+        }
+    }
+
+    protected static function getPage()
+    {
+        return (!empty($_GET)) ? array_keys($_GET)[0] : null;
+    }
+
+    public function printBuffer()
+    {
+        foreach ($this->headers as $header)
+        {
+            header($header);
+        }
+
+        echo $this->buffer;
     }
 }
 
-// "Installer":
-if ($passwordHash == '' && !in_array($page, array('css', 'ins')))
-{
-    $output = str_replace('{CONTENT}', $template['installer'], $template['global']);
-}
-
-echo $output;
+$page = new Page();
+$page->printBuffer();
