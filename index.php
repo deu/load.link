@@ -74,6 +74,11 @@ HTML
 HTML
     ,
 
+    'logoutLink' => <<<'HTML'
+        <div id="logoutLink"><a href="?lgt">Logout</a></div>
+HTML
+    ,
+
     'installForm' => <<<'HTML'
             <form id="login" method="post" action="?ins">
                 <input id="password" type="password" name="password" placeholder="choose a password">
@@ -189,6 +194,18 @@ BUTTON .gray {
 #accessString:hover {
     color: #555555;
 }
+#logoutLink {
+    position: relative;
+    bottom: -70px;
+    font-size: 14px;
+}
+#logoutLink A {
+    color: #555555;
+    text-decoration: none;
+}
+#logoutLink A:hover {
+    color: #000000;
+}
 #link {
     padding-top: 65px;
     font-size: 14px;
@@ -241,7 +258,8 @@ CSS
 
             case 'uploader':
 
-                $this->replace('CONTENT', $this->templates['uploadForm']);
+                $this->replace('CONTENT', $this->templates['uploadForm']
+                    . $this->templates['logoutLink']);
 
                 break;
 
@@ -503,6 +521,7 @@ class Page
                     && (hash('sha512', $_POST['password'])) === Config::getPasswordHash())
                 {
                     $_SESSION['passwordHash'] = hash('sha512', $_POST['password']);
+                    setcookie('passwordHash', $_SESSION['passwordHash']);
                 }
 
                 $t = new Template('redirect');
@@ -516,6 +535,8 @@ class Page
 
                 unset($_SESSION['passwordHash']);
                 session_destroy();
+                unset($_COOKIE['passwordHash']);
+                setcookie('passwordHash', '');
 
                 $t = new Template('redirect');
                 $this->buffer = $t
@@ -600,8 +621,22 @@ class Page
 
                 else
                 {
-                    if (isset($_SESSION['passwordHash'])
-                        && $_SESSION['passwordHash'] === Config::getPasswordHash())
+                    if (isset($_COOKIE['passwordHash'])
+                        && $_COOKIE['passwordHash'] === Config::getPasswordHash())
+                    {
+                        if (!isset($_SESSION['passwordHash']))
+                        {
+                            $_SESSION['passwordHash'] === $_COOKIE['passwordHash'];
+                        }
+
+                        $loggedIn = true;
+                    }
+                    else
+                    {
+                        $loggedIn = false;
+                    }
+
+                    if ($loggedIn)
                     {
                         $accessString = $_SERVER['HTTP_HOST'] . '|' . $_SERVER['SERVER_PORT'] . '|' . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '|' . Config::getPasswordHash();
 
