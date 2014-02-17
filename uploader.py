@@ -18,6 +18,8 @@ fileHash = s.hexdigest()
 
 headers = { 'passwordHash': passwordHash, 'fileHash': fileHash, 'fileName': basename(filePath) }
 
-r = requests.post(url, files = { 'headers': json.dumps(headers), 'data': open(filePath, 'rb') })
+response = requests.post(url, files = { 'headers': json.dumps(headers), 'data': open(filePath, 'rb') })
 
-print(r.text)
+r = json.loads(response.text)
+
+print(r.get('url', r.get('error', 'Client side unknown error.')))
