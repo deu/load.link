@@ -301,22 +301,17 @@ else
 
         case 'j':
 
-            $json = json_decode(file_get_contents('php://input'));
+            $headers = json_decode(file_get_contents($_FILES['headers']['tmp_name']));
 
-            $response['token'] = $json['token'];
-
-            if ($json['passwordHash'] === $passwordHash)
+            if ($headers->{'passwordHash'} === $passwordHash)
             {
-                if ($json['hash'] != md5($json['data']))
+                if ($headers->{'fileHash'} === md5(file_get_contents($_FILES['data']['tmp_name'])))
                 {
-                    $tmp = tempnam(sys_get_temp_dir(), $json['hash']);
-                    file_put_contents($tmp, $json['data']);
-                    $response['url'] = upload($json['name'], $tmp)['url'];
-                    unlink($tmp);
+                    $response['url'] = upload($headers->{'fileName'} , $_FILES['data']['tmp_name'])['url'];
                 }
                 else
                 {
-                    $response['error'] = 'WRONG HASH';
+                    $response['error'] = 'WRONG FILE HASH';
                 }
             }
             else
@@ -325,7 +320,7 @@ else
             }
 
             header('Content-Type: application/json');
-            $output = $response;
+            $output = json_encode($response);
 
             break;
 
