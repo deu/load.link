@@ -4,15 +4,15 @@ import requests
 import json
 from sys import argv
 from os.path import basename
-from hashlib import md5, sha1
+from hashlib import sha512
 
 url          = argv[1]
-passwordHash = sha1(argv[2].encode('utf-8')).hexdigest()
+passwordHash = sha512(argv[2].encode('utf-8')).hexdigest()
 filePath     = argv[3]
 
-s = md5()
+s = sha512()
 with open(filePath, 'rb') as f:
-    for chunk in iter(lambda: f.read(32768), b''):
+    for chunk in iter(lambda: f.read(8196), b''):
         s.update(chunk)
 fileHash = s.hexdigest()
 
