@@ -426,7 +426,6 @@ class JsonApi
         if ($this->headers['passwordHash'] !== Config::getPasswordHash())
         {
             $this->response['error'] = 'ACCESS DENIED';
-            return $this;
         }
 
         if ($this->headers['fileHash'] !== hash('sha512', file_get_contents($this->filePath)))
@@ -439,7 +438,7 @@ class JsonApi
 
     public function upload()
     {
-        if (!$this->headers['error'])
+        if (!$this->response['error'])
         {
             $u = new Uploader($this->headers['fileName'], $this->filePath);
             $u->upload();
