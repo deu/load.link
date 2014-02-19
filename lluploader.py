@@ -2,7 +2,7 @@
 
 import requests
 import json
-import progressbar
+import progressbar as pbar
 from sys import argv
 from requests_toolbelt import MultipartEncoder
 from os.path import basename
@@ -47,23 +47,29 @@ class LLUploader():
 
         return self
 
-
 if __name__ == '__main__':
 
     url          = argv[1]
     passwordHash = sha512(argv[2].encode('utf-8')).hexdigest()
     filePath     = argv[3]
 
-    pbar = progressbar.ProgressBar()
+    b = pbar.ProgressBar(
+        widgets = [
+            pbar.Percentage(), ' ',
+            pbar.Bar(), ' ',
+            pbar.FileTransferSpeed(), '    ',
+            pbar.ETA()
+        ]
+    )
 
     u = LLUploader(url, passwordHash, filePath,
-        callback = lambda files: pbar.update(files.bytes_read))
+        callback = lambda files: b.update(files.bytes_read))
 
-    pbar.maxval = len(u.files)
-    pbar.start()
+    b.maxval = len(u.files)
+    b.start()
     u.upload()
-    pbar.finish()
+    b.finish()
 
     r = json.loads(u.response.text)
 
-    print(r.get('url', r.get('error', 'Client side unknown error.')))
+    print('\nLink: ' + r.get('url', r.get('error', 'Client side unknown error.')))
