@@ -2,7 +2,7 @@
 
 Easily upload files to your HTTP server and share them with your friends using a nice link.
 
-Just put `index.php` into an empty directory with write permissions and browse to it. The installation process is straightforward: just choose a password and start uploading!
+Just put `index.php` in an empty directory with write permissions and browse to it. The installation process is straightforward: just choose a password and start uploading!
 
 
 ### Requirements
@@ -14,7 +14,7 @@ Just put `index.php` into an empty directory with write permissions and browse t
 
 ### Work in progress
 
-There's also a fully functional CLI client written in Python, but as it isn't packaged yet and uses custom libraries you might have some difficulties using it if you're not 1337 enough.
+There's also a fully functional CLI client written in Python (`lluploader.py`), but as it isn't packaged yet and uses custom libraries you might have some difficulties using it if you're not 1337 enough.
 
 But worry not: functional prepackaged GUI clients for all major platforms are coming soon!
 
