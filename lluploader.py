@@ -57,6 +57,7 @@ def createConfigFile(configFilePath):
             i = input('Do you want to create a configuration file? [yes] ')
 
         if (i == 'no'):
+            exit()
             return
 
         accessString = None
@@ -74,6 +75,7 @@ def createConfigFile(configFilePath):
 
             if (i == 'no'):
                 print('No configuration file has been created.')
+                exit()
                 return
 
             url = None
@@ -142,20 +144,17 @@ if __name__ == '__main__':
 
     else:
 
-        try:
-            with open(configFilePath, 'r') as configFile:
-                config = ConfigParser()
-                config.read_file(configFile)
-                url          = config['LLUploader']['url']
-                passwordHash = config['LLUploader']['passwordHash']
-
-        except IOError:
-
-            print('I couldn\'t find a valid configuration file.')
-
-            createConfigFile(configFilePath)
-            parser.print_help()
-            exit()
+        while True:
+            try:
+                with open(configFilePath, 'r') as configFile:
+                    config = ConfigParser()
+                    config.read_file(configFile)
+                    url          = config['LLUploader']['url']
+                    passwordHash = config['LLUploader']['passwordHash']
+                    break
+            except IOError:
+                print('I couldn\'t find a valid configuration file.')
+                createConfigFile(configFilePath)
 
     if showProgress:
         b = pbar.ProgressBar(
