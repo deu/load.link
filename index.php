@@ -1,5 +1,5 @@
 <?php
-$passwordHash = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'; // For now it stays like this because it's a pain to delete it every time I push it. The password is "test". Feel free to delete the hash and try installing it.
+$passwordHash = '';
 // --------------------------------------------------------
 // DO NOT TOUCH THE FIRST TWO LINES.
 
@@ -7,10 +7,11 @@ $passwordHash = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db
 // Optional configuration:
 $uploadDir      = '.';
 $databasePath   = '.db';
-$idLength       = 6; // must be longer than 3 characters.
+$idLength       = 4; // must be longer than one character.
 $idCharacters   = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 $sameNameSuffix = '.1';
 $https          = false;
+$cutLastSlash   = true;
 
 
 // Here be dragons:
@@ -41,8 +42,10 @@ class Template
     </head>
     <body>
         <div id="contents">
+{LOGO}
 {CONTENT}
         </div>
+{FOOTER}
     </body>
 </html>
 HTML
@@ -56,7 +59,7 @@ HTML
     'defaultHeaders' => <<<'HTML'
         <meta charset="UTF-8">
         <title>load.link</title>
-        <link rel="stylesheet" type="text/css" href="?css">
+        <link rel="stylesheet" type="text/css" href="?s">
 HTML
     ,
 
@@ -66,7 +69,7 @@ HTML
     ,
 
     'loginForm' => <<<'HTML'
-            <form id="login" method="post" action="?lgn">
+            <form id="login" method="post" action="?e">
                 <input id="password" type="password" name="password" placeholder="password">
                 <br />
                 <button class="submitButton" type="submit">login</button>
@@ -74,13 +77,8 @@ HTML
 HTML
     ,
 
-    'logoutLink' => <<<'HTML'
-        <div id="logoutLink"><a href="?lgt">Logout</a></div>
-HTML
-    ,
-
     'installForm' => <<<'HTML'
-            <form id="login" method="post" action="?ins">
+            <form id="login" method="post" action="?i">
                 <input id="password" type="password" name="password" placeholder="choose a password">
                 <br />
                 <button class="submitButton" type="submit">install</button>
@@ -89,13 +87,14 @@ HTML
     ,
 
     'uploadForm' => <<<'HTML'
-            <form id="upload" method="post" action="?l" enctype="multipart/form-data">
+            <form id="upload" method="post" action="?u" enctype="multipart/form-data">
                 <input id="fileHidden" type="file" name="file" onchange="javascript: document.getElementById('fileName').value = this.value">
                 <input id="fileName" type="text" name="fileName" placeholder="select file">
                 <br />
                 <button class="submitButton" type="submit"><span class="gray">up</span>load</button>
             </form>
             <a id="accessString" href="#" onclick="window.prompt('Copy the following string: (CTRL/CMD+C)', '{ACCESS_STRING}');">Click here and copy the access string to the load.link app.</a>
+            <div id="logoutLink"><a href="?x">Logout</a></div>
 HTML
     ,
 
@@ -228,65 +227,72 @@ CSS
     {
         $this->template = $template;
 
-        if ($this->template == 'css')
-        {
-            $this->buffer = $this->templates['css'];
-
-            return $this;
-        }
-
-        $this->buffer = $this->templates['global'];
-
-        if ($this->template == 'redirect')
-        {
-            $this->replace('HEADERS', $this->templates['metaRefresh']);
-            $this->replace('CONTENT', '');
-
-            return $this;
-        }
-
-        $this->replace('HEADERS', $this->templates['defaultHeaders']);
-        $this->replace('CONTENT', $this->templates['logo'] . "\n" . '{CONTENT}');
-
         switch ($this->template)
         {
+            case 'css':
+                $this
+                    ->add('css');
+                break;
+
+            case 'redirect':
+                $this
+                    ->add('global')
+                    ->replace('HEADERS', 'metaRefresh');
+                break;
+
             case 'installer':
-
-                $this->replace('CONTENT', $this->templates['installForm']);
-
+                $this
+                    ->add('global')
+                    ->replace('HEADERS', 'defaultHeaders')
+                    ->replace('LOGO', 'logo')
+                    ->replace('CONTENT', 'installForm');
                 break;
 
             case 'uploader':
-
-                $this->replace('CONTENT', $this->templates['uploadForm']
-                    . $this->templates['logoutLink']);
-
+                $this
+                    ->add('global')
+                    ->replace('HEADERS', 'defaultHeaders')
+                    ->replace('LOGO', 'logo')
+                    ->replace('CONTENT', 'uploadForm');
                 break;
 
             case 'login':
-
-                $this->replace('CONTENT', $this->templates['loginForm']);
-
+                $this
+                    ->add('global')
+                    ->replace('HEADERS', 'defaultHeaders')
+                    ->replace('LOGO', 'logo')
+                    ->replace('CONTENT', 'loginForm');
                 break;
 
             case 'link':
-
-                $this->replace('CONTENT', $this->templates['linkToUploadedFile']);
-
+                $this
+                    ->add('global')
+                    ->replace('HEADERS', 'defaultHeaders')
+                    ->replace('LOGO', 'logo')
+                    ->replace('CONTENT', 'linkToUploadedFile');
                 break;
         }
 
         return $this;
     }
 
-    protected function replace($search, $replace)
+    protected function add($template)
     {
-        $this->buffer = str_replace('{' . $search . '}', $replace, $this->buffer);
+        $this->buffer .= $this->templates[$template];
+
+        return $this;
+    }
+
+    protected function replace($search, $template)
+    {
+        $this->buffer = str_replace('{' . $search . '}', $this->templates[$template], $this->buffer);
+
+        return $this;
     }
 
     public function with($search, $replace)
     {
-        $this->replace($search, $replace);
+        $this->buffer = str_replace('{' . $search . '}', $replace, $this->buffer);
 
         return $this;
     }
@@ -298,7 +304,7 @@ CSS
 
     public function get()
     {
-        return $this->buffer;
+        return preg_replace('/{[A-Z]+}/', '', $this->buffer);
     }
 }
 
@@ -406,7 +412,19 @@ class Uploader
 
     public function getURL()
     {
-        return 'http' . (Config::getHttps() ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . (!in_array($_SERVER['SERVER_PORT'], array(80, 443)) ? ':' . $_SERVER['SERVER_PORT'] : '') . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '?' . $this->id;
+        $requestURL =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
+        if (Config::getCutLastSlash()
+            && substr($requestURL, -1, 1) == '/')
+        {
+            $requestURL = substr($requestURL, 0, -1);
+        }
+
+        return 'http' . (Config::getHttps() ? 's' : '') . '://'
+            . $_SERVER['HTTP_HOST']
+            . (!in_array($_SERVER['SERVER_PORT'], array(80, 443)) ?
+                ':' . $_SERVER['SERVER_PORT'] : '')
+            . $requestURL
+            . '?' . $this->id;
     }
 }
 
@@ -454,6 +472,54 @@ class JsonApi
     }
 }
 
+class Auth
+{
+    public function __construct()
+    {
+        session_start();
+
+        if (!empty($_COOKIE['passwordHash']))
+        {
+            $_SESSION['passwordHash'] = $_COOKIE['passwordHash'];
+        }
+    }
+
+    public function isLogged()
+    {
+        if (!empty($_SESSION['passwordHash'])
+            && $_SESSION['passwordHash'] === Config::getPasswordHash())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function logIn($password)
+    {
+        if (hash('sha512', $password) === Config::getPasswordHash())
+        {
+            $_SESSION['passwordHash'] = hash('sha512', $password);
+            setcookie('passwordHash', $_SESSION['passwordHash']);
+        }
+    }
+
+    public function logOut()
+    {
+        unset($_SESSION['passwordHash']);
+        unset($_COOKIE['passwordHash']);
+        setcookie('passwordHash', '');
+    }
+
+    public static function logInWithPasswordHash($passwordHash)
+    {
+        $_SESSION['passwordHash'] = $passwordHash;
+        setcookie('passwordHash', $_SESSION['passwordHash']);
+    }
+}
+
 class Installer
 {
     public static function isAlreadyInstalled()
@@ -463,11 +529,13 @@ class Installer
 
     public static function install()
     {
-        $ph = $_SESSION['passwordHash'] = hash('sha512', ($_POST['password']));
+        $ph = hash('sha512', $_POST['password']);
 
         $thisFile = file(__FILE__);
         $thisFile[1] = '$passwordHash = \'' . $ph . '\';' . "\n";
         file_put_contents(__FILE__, implode('', $thisFile));
+
+        Auth::logInWithPasswordHash($ph);
     }
 }
 
@@ -476,17 +544,17 @@ class Page
     protected $headers;
     protected $buffer;
     protected $page;
+    protected $auth;
 
     public function __construct()
     {
         $this->headers = array();
         $this->page    = self::getPage();
-
-        session_start();
+        $this->auth    = new Auth();
 
         switch ($this->page)
         {
-            case 'css':
+            case 's':
 
                 $this->headers[] = 'Content-Type: text/css';
 
@@ -496,7 +564,7 @@ class Page
 
                 return $this;
 
-            case 'ins':
+            case 'i':
 
                 if (!Installer::isAlreadyInstalled())
                 {
@@ -514,14 +582,9 @@ class Page
 
                 return $this;
 
-            case 'lgn':
+            case 'e':
 
-                if (isset($_POST['password'])
-                    && (hash('sha512', $_POST['password'])) === Config::getPasswordHash())
-                {
-                    $_SESSION['passwordHash'] = hash('sha512', $_POST['password']);
-                    setcookie('passwordHash', $_SESSION['passwordHash']);
-                }
+                $this->auth->logIn($_POST['password']);
 
                 $t = new Template('redirect');
                 $this->buffer = $t
@@ -530,12 +593,9 @@ class Page
 
                 return $this;
 
-            case 'lgt':
+            case 'x':
 
-                unset($_SESSION['passwordHash']);
-                session_destroy();
-                unset($_COOKIE['passwordHash']);
-                setcookie('passwordHash', '');
+                $this->auth->logOut();
 
                 $t = new Template('redirect');
                 $this->buffer = $t
@@ -544,23 +604,32 @@ class Page
 
                 return $this;
 
-            case 'l':
+            case 'u':
 
-                $u = new Uploader($_FILES["file"]["name"], $_FILES["file"]["tmp_name"]);
-                $u->upload();
-
-                if (in_array(substr($u->getFileMimeType(), 0, strpos($u->getFileMimeType(), '/')), array('text', 'image')))
+                if ($this->auth->isLogged())
                 {
-                    $t = new Template('redirect');
-                    $this->buffer = $t
-                        ->with('URL', $u->getURL())
-                        ->get();
+                    $u = new Uploader($_FILES["file"]["name"], $_FILES["file"]["tmp_name"]);
+                    $u->upload();
+
+                    if (in_array(substr($u->getFileMimeType(), 0, strpos($u->getFileMimeType(), '/')), array('text', 'image')))
+                    {
+                        $t = new Template('redirect');
+                        $this->buffer = $t
+                            ->with('URL', $u->getURL())
+                            ->get();
+                    }
+                    else
+                    {
+                        $t = new Template('link');
+                        $this->buffer = $t
+                            ->with('URL', $u->getURL())
+                            ->get();
+                    }
                 }
                 else
                 {
-                    $t = new Template('link');
+                    $t = new Template('login');
                     $this->buffer = $t
-                        ->with('URL', $u->getURL())
                         ->get();
                 }
 
@@ -581,7 +650,7 @@ class Page
 
             default:
 
-                if (strlen($this->page) > 3)
+                if (strlen($this->page) > 1)
                 {
                     $db = unserialize(file_get_contents(Config::getDatabasePath()));
 
@@ -620,24 +689,13 @@ class Page
 
                 else
                 {
-                    if (isset($_COOKIE['passwordHash'])
-                        && $_COOKIE['passwordHash'] === Config::getPasswordHash())
+                    if ($this->auth->isLogged())
                     {
-                        if (!isset($_SESSION['passwordHash']))
-                        {
-                            $_SESSION['passwordHash'] === $_COOKIE['passwordHash'];
-                        }
-
-                        $loggedIn = true;
-                    }
-                    else
-                    {
-                        $loggedIn = false;
-                    }
-
-                    if ($loggedIn)
-                    {
-                        $accessString = $_SERVER['HTTP_HOST'] . '|' . $_SERVER['SERVER_PORT'] . '|' . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')) . '|' . Config::getPasswordHash();
+                        $accessString = 'http' . (!empty($_SERVER['HTTPS']) && $_SERVER['https'] !== 'off' ? 's' : '') . '://'
+                            . $_SERVER['HTTP_HOST']
+                            . ':' . $_SERVER['SERVER_PORT']
+                            . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'))
+                            . '|' . Config::getPasswordHash();
 
                         $t = new Template('uploader');
                         $this->buffer = $t
