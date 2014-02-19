@@ -3,9 +3,12 @@
 import requests
 import json
 import progressbar as pbar
-from sys import argv
+from sys import argv, exit
+from os.path import basename, expanduser
+from argparse import ArgumentParser, HelpFormatter
+from configparser import ConfigParser
+from getpass import getpass
 from requests_toolbelt import MultipartEncoder
-from os.path import basename
 from hashlib import sha512
 
 class LLUploader():
@@ -40,36 +43,149 @@ class LLUploader():
     def upload(self):
 
         self.response = requests.post(
-            url,
+            url + '?j',
             data = self.files,
             headers = { 'Content-Type': self.files.content_type  }
         )
 
         return self
 
+def createConfigFile(configFilePath):
+
+        i = None
+        while (i not in ( 'yes', 'no', '' )):
+            i = input('Do you want to create a configuration file? [yes] ')
+
+        if (i == 'no'):
+            return
+
+        accessString = None
+        while (not accessString):
+            accessString = input('Paste your Access Sting: ')
+
+        try:
+            url, passwordHash = accessString.split('|')
+        except:
+            print('The access string you entered is invalid.')
+
+            i = None
+            while (i not in ( 'yes', 'no', '' )):
+                i = input('Do you want manually insert URL and Password? [no] ')
+
+            if (i == 'no'):
+                print('No configuration file has been created.')
+                return
+
+            url = None
+            while (not url):
+                url = input('Insert the URL to your load.link installation: ')
+
+            password = None
+            while (not password):
+                password = getpass('Insert your password (it won\'t show): ')
+
+            passwordHash = sha512(password.encode('utf-8')).hexdigest()
+
+        config = ConfigParser()
+
+        config['LLUploader'] = {
+            'url':          url,
+            'passwordHash': passwordHash
+        }
+
+        with open(configFilePath, 'w') as configFile:
+            config.write(configFile)
+
+        print('Configuration successfully saved.')
+
 if __name__ == '__main__':
 
-    url          = argv[1]
-    passwordHash = sha512(argv[2].encode('utf-8')).hexdigest()
-    filePath     = argv[3]
+    configFilePath = expanduser('~/.lluploader')
 
-    b = pbar.ProgressBar(
-        widgets = [
-            pbar.Percentage(), ' ',
-            pbar.Bar(), ' ',
-            pbar.FileTransferSpeed(), '    ',
-            pbar.ETA()
-        ]
+    parser = ArgumentParser(
+        prog = 'LLUploader',
+        description = 'Upload files to a load.link server.',
+        formatter_class = lambda prog:
+            HelpFormatter(prog, max_help_position = 80)
     )
 
-    u = LLUploader(url, passwordHash, filePath,
-        callback = lambda files: b.update(files.bytes_read))
+    parser.add_argument('-u', '--url',
+        help    = 'the url to the load.link server')
+    parser.add_argument('-p', '--password',
+        help    = 'the password')
+    parser.add_argument('FILE', nargs='+',
+        help    = 'the file(s) you want to upload')
+    parser.add_argument('-P', '--hideprogress',
+        action  = 'store_const',
+        const   = True,
+        help    = 'hide the progress bar')
+    parser.add_argument('-c', '--config',
+        action  = 'store_const',
+        const   = True,
+        help    = 'create a new configuration file')
 
-    b.maxval = len(u.files)
-    b.start()
-    u.upload()
-    b.finish()
+    # Gotta bypass argparse here:
+    if list(set(argv) & { '-c', '--config' }):
+        createConfigFile(configFilePath)
+        exit()
 
-    r = json.loads(u.response.text)
+    args = parser.parse_args()
+    files        = args.FILE
+    showProgress = not args.hideprogress
 
-    print('\nLink: ' + r.get('url', r.get('error', 'Client side unknown error.')))
+    if (args.url and args.password):
+        url          = args.url
+        passwordHash = sha512(args.password.encode('utf-8')).hexdigest()
+
+    else:
+
+        try:
+            with open(configFilePath, 'r') as configFile:
+                config = ConfigParser()
+                config.read_file(configFile)
+                url          = config['LLUploader']['url']
+                passwordHash = config['LLUploader']['passwordHash']
+
+        except IOError:
+
+            print('I couldn\'t find a valid configuration file.')
+
+            createConfigFile(configFilePath)
+            parser.print_help()
+            exit()
+
+    if showProgress:
+        b = pbar.ProgressBar(
+            widgets = [
+                pbar.Percentage(), ' ',
+                pbar.Bar(), ' ',
+                pbar.FileTransferSpeed(), '    ',
+                pbar.ETA()
+            ]
+        )
+
+        b.maxval = 0
+
+    uploads = []
+    for filePath in files:
+        u = LLUploader(url, passwordHash, filePath,
+            callback = (lambda files: b.update(files.bytes_read))
+                        if showProgress else None)
+
+        uploads.append(u)
+
+        if showProgress:
+            b.maxval += len(u.files)
+
+    if showProgress:
+        b.start()
+
+    for upload in uploads:
+        upload.upload()
+
+    if showProgress:
+        b.finish()
+
+    for upload in uploads:
+        r = json.loads(upload.response.text)
+        print(r.get('url', r.get('error')))
