@@ -80,6 +80,9 @@ def createConfigFile(configFilePath):
             while (not url):
                 url = input('Insert the URL to your load.link installation: ')
 
+            if not '://' in url:
+                url = 'http://' + url
+
             password = None
             while (not password):
                 password = getpass('Insert your password (it won\'t show): ')
@@ -134,7 +137,7 @@ if __name__ == '__main__':
     showProgress = not args.hideprogress
 
     if (args.url and args.password):
-        url          = args.url
+        url          = args.url if '://' in args.url else 'http://' + args.url
         passwordHash = sha512(args.password.encode('utf-8')).hexdigest()
 
     else:
