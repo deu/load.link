@@ -43,7 +43,7 @@ class LLUploader():
     def upload(self):
 
         self.response = requests.post(
-            url + '?j',
+            self.url + '?j',
             data = self.files,
             headers = { 'Content-Type': self.files.content_type  }
         )
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     configFilePath = expanduser('~/.lluploader')
 
     parser = ArgumentParser(
-        prog = 'LLUploader',
+        prog = 'lluploader',
         description = 'Upload files to a load.link server.',
         formatter_class = lambda prog:
             HelpFormatter(prog, max_help_position = 80)
@@ -189,5 +189,10 @@ if __name__ == '__main__':
         b.finish()
 
     for upload in uploads:
-        r = json.loads(upload.response.text)
-        print(r.get('url', r.get('error')))
+        try:
+            r = json.loads(upload.response.text)
+            print(r.get('url',
+                upload.filePath + ': server returned an error: ' + r.get('error', ''))
+            )
+        except ValueError:
+            print(upload.filePath + ': server returned an invalid response')
