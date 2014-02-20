@@ -43,7 +43,7 @@ class LLUploader():
     def upload(self):
 
         self.response = requests.post(
-            url + '?j',
+            self.url + '?j',
             data = self.files,
             headers = { 'Content-Type': self.files.content_type  }
         )
@@ -57,6 +57,7 @@ def createConfigFile(configFilePath):
             i = input('Do you want to create a configuration file? [yes] ')
 
         if (i == 'no'):
+            exit()
             return
 
         accessString = None
@@ -74,11 +75,15 @@ def createConfigFile(configFilePath):
 
             if (i == 'no'):
                 print('No configuration file has been created.')
+                exit()
                 return
 
             url = None
             while (not url):
                 url = input('Insert the URL to your load.link installation: ')
+
+            if not '://' in url:
+                url = 'http://' + url
 
             password = None
             while (not password):
@@ -103,7 +108,7 @@ if __name__ == '__main__':
     configFilePath = expanduser('~/.lluploader')
 
     parser = ArgumentParser(
-        prog = 'LLUploader',
+        prog = 'lluploader',
         description = 'Upload files to a load.link server.',
         formatter_class = lambda prog:
             HelpFormatter(prog, max_help_position = 80)
@@ -134,25 +139,22 @@ if __name__ == '__main__':
     showProgress = not args.hideprogress
 
     if (args.url and args.password):
-        url          = args.url
+        url          = args.url if '://' in args.url else 'http://' + args.url
         passwordHash = sha512(args.password.encode('utf-8')).hexdigest()
 
     else:
 
-        try:
-            with open(configFilePath, 'r') as configFile:
-                config = ConfigParser()
-                config.read_file(configFile)
-                url          = config['LLUploader']['url']
-                passwordHash = config['LLUploader']['passwordHash']
-
-        except IOError:
-
-            print('I couldn\'t find a valid configuration file.')
-
-            createConfigFile(configFilePath)
-            parser.print_help()
-            exit()
+        while True:
+            try:
+                with open(configFilePath, 'r') as configFile:
+                    config = ConfigParser()
+                    config.read_file(configFile)
+                    url          = config['LLUploader']['url']
+                    passwordHash = config['LLUploader']['passwordHash']
+                    break
+            except IOError:
+                print('I couldn\'t find a valid configuration file.')
+                createConfigFile(configFilePath)
 
     if showProgress:
         b = pbar.ProgressBar(
@@ -187,5 +189,10 @@ if __name__ == '__main__':
         b.finish()
 
     for upload in uploads:
-        r = json.loads(upload.response.text)
-        print(r.get('url', r.get('error')))
+        try:
+            r = json.loads(upload.response.text)
+            print(r.get('url',
+                upload.filePath + ': server returned an error: ' + r.get('error', ''))
+            )
+        except ValueError:
+            print(upload.filePath + ': server returned an invalid response')
