@@ -64,7 +64,7 @@ HTML
     ,
 
     'metaRefresh' => <<<'HTML'
-        <meta http-equiv="refresh" content="0; url={URL}" />
+        <meta http-equiv="refresh" content="{INTERVAL}; url={URL}" />
 HTML
     ,
 
@@ -219,6 +219,8 @@ BUTTON .gray {
 }
 CSS
     );
+
+    /* TODO: Seriously, write a decent minimal template engine please... */
 
     protected $template;
     protected $buffer;
@@ -569,8 +571,9 @@ class Page
 
                     $t = new Template('redirect');
                     $this->buffer = $t
-                        ->with('URL', '?')
-                        ->get();
+                        ->with('INTERVAL', 2) // <- gotta give it a bit of time
+                        ->with('URL', '?')    //    because the file may be not
+                        ->get();              //    have been written yet.
                 }
                 else
                 {
@@ -585,6 +588,7 @@ class Page
 
                 $t = new Template('redirect');
                 $this->buffer = $t
+                    ->with('INTERVAL', 0)
                     ->with('URL', '?')
                     ->get();
 
@@ -596,6 +600,7 @@ class Page
 
                 $t = new Template('redirect');
                 $this->buffer = $t
+                    ->with('INTERVAL', 0)
                     ->with('URL', '?')
                     ->get();
 
@@ -617,6 +622,7 @@ class Page
                     {
                         $t = new Template('redirect');
                         $this->buffer = $t
+                            ->with('INTERVAL', 0)
                             ->with('URL', $u->getURL())
                             ->get();
                     }
