@@ -3,40 +3,43 @@
 import requests
 import json
 import progressbar as pbar
-from sys import stderr, argv, exit
-from time import sleep
-from os.path import basename, expanduser
-from argparse import ArgumentParser, HelpFormatter
-from configparser import ConfigParser
-from getpass import getpass
+from sys               import stderr, argv, exit
+from time              import sleep
+from os.path           import basename, expanduser
+from argparse          import ArgumentParser, HelpFormatter
+from configparser      import ConfigParser
+from tempfile          import NamedTemporaryFile
+from zipfile           import ZipFile
+from getpass           import getpass
 from requests_toolbelt import MultipartEncoder
-from hashlib import sha512
+from hashlib           import sha512
 
 class LLUploader():
 
-    def __init__(self, url, passwordHash, filePath, callback = None):
+    def __init__(self, url, passwordHash, fileHandle, fileName, callback = None):
 
         self.response = None
 
         self.url          = url
         self.passwordHash = passwordHash
-        self.filePath     = filePath
+        self.fileHandle   = fileHandle
+        self.fileName     = fileName
 
         fileHash = sha512()
-        with open(self.filePath, 'rb') as file:
-            for chunk in iter(lambda: file.read(8196), b''):
+        for chunk in iter(lambda: fileHandle.read(8196), b''):
                 fileHash.update(chunk)
+        fileHandle.seek(0) # needed before the request module's read
         self.fileHash = fileHash.hexdigest()
 
         self.headers = {
             'passwordHash': self.passwordHash,
             'fileHash':     self.fileHash,
-            'fileName':     basename(self.filePath)
+            'fileName':     self.fileName
         }
 
         self.data = MultipartEncoder(fields = {
                 'headers': ('headers', json.dumps(self.headers),  ''),
-                'data':    ('data',    open(self.filePath, 'rb'), '')
+                'data':    ('data',    fileHandle,                '')
             },
             callback = callback
         )
@@ -121,6 +124,8 @@ if __name__ == '__main__':
         help    = 'the password')
     parser.add_argument('FILE', nargs='+',
         help    = 'the file(s) you want to upload')
+    parser.add_argument('-z', '--zipfile',
+        help    = 'compress the file(s) into ZIPFILE.zip before uploading')
     parser.add_argument('-P', '--hideprogress',
         action  = 'store_const',
         const   = True,
@@ -136,8 +141,34 @@ if __name__ == '__main__':
         exit()
 
     args = parser.parse_args()
-    files        = args.FILE
     showProgress = not args.hideprogress
+
+    files = []
+
+    for filePath in args.FILE:
+        try:
+            files.append({
+                'handle': open(filePath, 'rb'),
+                'name':   basename(filePath)
+            })
+        except IOError:
+            print(filePath + ': not found', file = stderr)
+            exit()
+
+    if args.zipfile:
+
+        tmpFile = NamedTemporaryFile()
+
+        with ZipFile(tmpFile.name, 'w') as zip:
+            for file in files:
+                zip.write(file['handle'].name)
+            zip.close()
+
+        files = [ { # do NOT append
+            'handle': tmpFile,
+            'name':   (args.zipfile if args.zipfile[-4:] == '.zip'
+                  else args.zipfile + '.zip')
+        } ]
 
     if (args.url and args.password):
         url          = args.url if '://' in args.url else 'http://' + args.url
@@ -170,20 +201,15 @@ if __name__ == '__main__':
         b.maxval = 0
 
     uploads = []
-    for filePath in files:
+    for file in files:
 
-        try:
+        u = LLUploader(url, passwordHash, file['handle'], file['name'],
+            callback = (lambda data: b.update(data.bytes_read))
+                        if showProgress else None)
+        if showProgress:
+            b.maxval += len(u.data)
 
-            u = LLUploader(url, passwordHash, filePath,
-                callback = (lambda files: b.update(files.bytes_read))
-                            if showProgress else None)
-            if showProgress:
-                b.maxval += len(u.data)
-
-            uploads.append(u)
-
-        except FileNotFoundError:
-            print(filePath + ': not found', file = stderr)
+        uploads.append(u)
 
     if showProgress:
         b.start()
@@ -194,10 +220,9 @@ if __name__ == '__main__':
         except:
             if showProgress:
                 b.start()
-                print('') # the next print overwrites the line otherwise
+                print('') # the next print overwrites the pbar otherwise
             print('Impossible to connect to ' + url, file = stderr)
             exit()
-
 
     if showProgress:
         b.finish()
