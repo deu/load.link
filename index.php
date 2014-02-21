@@ -285,7 +285,8 @@ CSS
 
     protected function replace($search, $template)
     {
-        $this->buffer = str_replace('{' . $search . '}', $this->templates[$template], $this->buffer);
+        $this->buffer = str_replace(
+            '{' . $search . '}', $this->templates[$template], $this->buffer);
 
         return $this;
     }
@@ -412,18 +413,11 @@ class Uploader
 
     public function getURL()
     {
-        $requestURL =  substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'));
-        if (Config::getCutLastSlash()
-            && substr($requestURL, -1, 1) == '/')
-        {
-            $requestURL = substr($requestURL, 0, -1);
-        }
-
         return 'http' . (Config::getHttps() ? 's' : '') . '://'
             . $_SERVER['HTTP_HOST']
             . (!in_array($_SERVER['SERVER_PORT'], array(80, 443)) ?
                 ':' . $_SERVER['SERVER_PORT'] : '')
-            . $requestURL
+            . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'))
             . '?' . $this->id;
     }
 }
@@ -436,7 +430,9 @@ class JsonApi
 
     public function __construct()
     {
-        $this->headers  = json_decode(file_get_contents($_FILES['headers']['tmp_name']), true);
+        $this->headers  = json_decode(
+            file_get_contents($_FILES['headers']['tmp_name']), true);
+
         $this->filePath = $_FILES['data']['tmp_name'];
 
         $this->headers['error'] = null;
@@ -446,7 +442,8 @@ class JsonApi
             $this->response['error'] = 'ACCESS DENIED';
         }
 
-        if ($this->headers['fileHash'] !== hash('sha512', file_get_contents($this->filePath)))
+        if ($this->headers['fileHash'] !== hash('sha512',
+            file_get_contents($this->filePath)))
         {
             $this->response['error'] = 'WRONG FILE HASH';
         }
@@ -611,7 +608,12 @@ class Page
                     $u = new Uploader($_FILES["file"]["name"], $_FILES["file"]["tmp_name"]);
                     $u->upload();
 
-                    if (in_array(substr($u->getFileMimeType(), 0, strpos($u->getFileMimeType(), '/')), array('text', 'image')))
+                    if (in_array(
+                            substr(
+                                $u->getFileMimeType(),
+                                0,
+                                strpos($u->getFileMimeType(), '/')),
+                            array('text', 'image')))
                     {
                         $t = new Template('redirect');
                         $this->buffer = $t
@@ -657,7 +659,15 @@ class Page
                     if (array_key_exists($this->page, $db)
                         && file_exists($db[$this->page]['fileName']))
                     {
-                        $contentDisposition = (in_array(substr($db[$this->page]['fileMimeType'], 0, strpos($db[$this->page]['fileMimeType'], '/')), array('text', 'image')) ? 'inline' : 'attachment') . '; filename=' . $db[$this->page]['fileName'];
+                        $contentDisposition = (in_array(
+                                substr(
+                                    $db[$this->page]['fileMimeType'],
+                                    0,
+                                    strpos($db[$this->page]['fileMimeType'], '/')
+                                ),
+                                array('text', 'image'))
+                                ? 'inline' : 'attachment')
+                            . '; filename=' . $db[$this->page]['fileName'];
 
                         $this->headers = array_merge($this->headers, array(
                             'Content-Type: ' . $db[$this->page]['fileMimeType'],
@@ -691,10 +701,17 @@ class Page
                 {
                     if ($this->auth->isLogged())
                     {
-                        $accessString = 'http' . (!empty($_SERVER['HTTPS']) && $_SERVER['https'] !== 'off' ? 's' : '') . '://'
+                        $accessString = 'http'
+                            . (!empty($_SERVER['HTTPS'])
+                                && $_SERVER['https'] !== 'off'
+                                ? 's' : '')
+                            . '://'
                             . $_SERVER['HTTP_HOST']
                             . ':' . $_SERVER['SERVER_PORT']
-                            . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?'))
+                            . substr(
+                                $_SERVER['REQUEST_URI'],
+                                0,
+                                strpos($_SERVER['REQUEST_URI'], '?'))
                             . '|' . Config::getPasswordHash();
 
                         $t = new Template('uploader');
