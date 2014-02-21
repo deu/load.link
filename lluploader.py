@@ -3,7 +3,8 @@
 import requests
 import json
 import progressbar as pbar
-from sys import argv, exit
+from sys import stderr, argv, exit
+from time import sleep
 from os.path import basename, expanduser
 from argparse import ArgumentParser, HelpFormatter
 from configparser import ConfigParser
@@ -21,11 +22,11 @@ class LLUploader():
         self.passwordHash = passwordHash
         self.filePath     = filePath
 
-        s = sha512()
-        with open(self.filePath, 'rb') as f:
-            for chunk in iter(lambda: f.read(8196), b''):
-                s.update(chunk)
-        self.fileHash = s.hexdigest()
+        fileHash = sha512()
+        with open(self.filePath, 'rb') as file:
+            for chunk in iter(lambda: file.read(8196), b''):
+                fileHash.update(chunk)
+        self.fileHash = fileHash.hexdigest()
 
         self.headers = {
             'passwordHash': self.passwordHash,
@@ -33,9 +34,9 @@ class LLUploader():
             'fileName':     basename(self.filePath)
         }
 
-        self.files = MultipartEncoder(fields = {
-            'headers': ('headers', json.dumps(self.headers),  ''),
-            'data':    ('data',    open(self.filePath, 'rb'), '')
+        self.data = MultipartEncoder(fields = {
+                'headers': ('headers', json.dumps(self.headers),  ''),
+                'data':    ('data',    open(self.filePath, 'rb'), '')
             },
             callback = callback
         )
@@ -44,8 +45,8 @@ class LLUploader():
 
         self.response = requests.post(
             self.url + '?j',
-            data = self.files,
-            headers = { 'Content-Type': self.files.content_type  }
+            data = self.data,
+            headers = { 'Content-Type': self.data.content_type  }
         )
 
         return self
@@ -66,7 +67,7 @@ def createConfigFile(configFilePath):
 
         try:
             url, passwordHash = accessString.split('|')
-        except:
+        except ValueError:
             print('The access string you entered is invalid.')
 
             i = None
@@ -170,29 +171,46 @@ if __name__ == '__main__':
 
     uploads = []
     for filePath in files:
-        u = LLUploader(url, passwordHash, filePath,
-            callback = (lambda files: b.update(files.bytes_read))
-                        if showProgress else None)
 
-        uploads.append(u)
+        try:
 
-        if showProgress:
-            b.maxval += len(u.files)
+            u = LLUploader(url, passwordHash, filePath,
+                callback = (lambda files: b.update(files.bytes_read))
+                            if showProgress else None)
+            if showProgress:
+                b.maxval += len(u.data)
+
+            uploads.append(u)
+
+        except FileNotFoundError:
+            print(filePath + ': not found', file = stderr)
 
     if showProgress:
         b.start()
 
     for upload in uploads:
-        upload.upload()
+        try:
+            upload.upload()
+        except:
+            if showProgress:
+                b.start()
+                print('') # the next print overwrites the line otherwise
+            print('Impossible to connect to ' + url, file = stderr)
+            exit()
+
 
     if showProgress:
         b.finish()
 
     for upload in uploads:
-        try:
-            r = json.loads(upload.response.text)
-            print(r.get('url',
-                upload.filePath + ': server returned an error: ' + r.get('error', ''))
-            )
-        except ValueError:
-            print(upload.filePath + ': server returned an invalid response')
+        r = json.loads(upload.response.text)
+        rURL   = r.get('url',   False)
+        rError = r.get('error', False)
+        if rURL:
+            print(rURL)
+        else:
+            print(upload.filePath + ': ', file = stderr)
+            if rError:
+                print('server returned an error: ' + rError, file = stderr)
+            else:
+                print('server returned an invalid response', file = stderr)
