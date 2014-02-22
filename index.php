@@ -64,7 +64,7 @@ HTML
     ,
 
     'metaRefresh' => <<<'HTML'
-        <meta http-equiv="refresh" content="{INTERVAL}; url={URL}" />
+        <meta http-equiv="refresh" content="0; url={URL}" />
 HTML
     ,
 
@@ -510,9 +510,11 @@ class Auth
         unset($_SESSION['passwordHash']);
         unset($_COOKIE['passwordHash']);
         setcookie('passwordHash', '');
+        session_destroy();
     }
 
-    public static function logInWithPasswordHash($passwordHash)
+    /* WARNING: Possibly dangerous. Use with care: */
+    public static function autoLogin($passwordHash)
     {
         $_SESSION['passwordHash'] = $passwordHash;
         setcookie('passwordHash', $_SESSION['passwordHash']);
@@ -528,13 +530,13 @@ class Installer
 
     public static function install()
     {
-        $ph = hash('sha512', $_POST['password']);
+        $passwordHash = hash('sha512', $_POST['password']);
 
         $thisFile = file(__FILE__);
-        $thisFile[1] = '$passwordHash = \'' . $ph . '\';' . "\n";
+        $thisFile[1] = '$passwordHash = \'' . $passwordHash . '\';' . "\n";
         file_put_contents(__FILE__, implode('', $thisFile));
 
-        Auth::logInWithPasswordHash($ph);
+        Auth::autoLogin($passwordHash);
     }
 }
 
@@ -567,13 +569,15 @@ class Page
 
                 if (!Installer::isAlreadyInstalled())
                 {
+                    // Clear a possible previous session:
+                    $this->auth->logOut();
+
                     Installer::install();
 
                     $t = new Template('redirect');
                     $this->buffer = $t
-                        ->with('INTERVAL', 2) // <- gotta give it a bit of time
-                        ->with('URL', '?')    //    because the file may be not
-                        ->get();              //    have been written yet.
+                        ->with('URL', '?')
+                        ->get();
                 }
                 else
                 {
@@ -588,7 +592,6 @@ class Page
 
                 $t = new Template('redirect');
                 $this->buffer = $t
-                    ->with('INTERVAL', 0)
                     ->with('URL', '?')
                     ->get();
 
@@ -600,7 +603,6 @@ class Page
 
                 $t = new Template('redirect');
                 $this->buffer = $t
-                    ->with('INTERVAL', 0)
                     ->with('URL', '?')
                     ->get();
 
@@ -622,7 +624,6 @@ class Page
                     {
                         $t = new Template('redirect');
                         $this->buffer = $t
-                            ->with('INTERVAL', 0)
                             ->with('URL', $u->getURL())
                             ->get();
                     }
