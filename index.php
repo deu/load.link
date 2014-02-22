@@ -66,7 +66,9 @@ HTML
     'metaRefresh' => <<<'HTML'
         <meta http-equiv="refresh" content="{INTERVAL}; url={URL}" />
 HTML
-    ,
+    , /* TODO: Make a nice page for for the redirect.
+        Or screw the redirect and implement a reload
+        system that doesn't need it. */
 
     'loginForm' => <<<'HTML'
             <form id="login" method="post" action="?e">
@@ -573,7 +575,8 @@ class Page
 
                     $t = new Template('redirect');
                     $this->buffer = $t
-                        ->with('INTERVAL', 2) // <- gotta give it a bit of time
+                        ->with('CONTENT', 'Installing...')
+                        ->with('INTERVAL', 3) // <- gotta give it a bit of time
                         ->with('URL', '?')    //    because the file may be not
                         ->get();              //    have been written yet.
                 }
