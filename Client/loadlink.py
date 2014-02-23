@@ -3,7 +3,7 @@
 import sys
 from os.path      import basename, expanduser
 from configparser import ConfigParser
-from PyQt4        import QtGui
+from PyQt4        import QtGui # PyQt5 pls.
 from lluploader   import LLUploader
 
 app       = QtGui.QApplication(sys.argv)
