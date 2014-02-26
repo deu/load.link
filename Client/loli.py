@@ -7,7 +7,7 @@ from PyQt4        import QtGui # PyQt5 pls.
 from lluploader   import LLUploader
 
 app       = QtGui.QApplication(sys.argv)
-trayIcon  = QtGui.QSystemTrayIcon(QtGui.QIcon("iconwhite.svg"), app)
+trayIcon  = QtGui.QSystemTrayIcon(QtGui.QIcon("trayicon.svg"), app)
 clipboard = QtGui.QApplication.clipboard()
 
 configFilePath = expanduser('~/.lluploader')
