@@ -1,0 +1,18 @@
+{% extends '_global.twig' %}
+
+{% block title %}{{ parent() }} :: {{ name }}{% endblock %}
+
+{% block head %}
+{{ parent() -}}
+<link href="{{ static_path }}prismjs/prism.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<main>
+	<pre id="h" class="line-numbers language-{{ language }}"{% if language != 'none' %} style="padding-left: 100px;"{% endif %} data-line="0"><code class="language-{{ language }}">{{ text }}</code></pre>
+</main>
+<footer>
+	<a href="{{ raw_url }}">RAW</a>
+</footer>
+<script src="{{ static_path }}prismjs/prism.js"></script>
+{% endblock %}

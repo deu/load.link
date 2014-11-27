@@ -1,0 +1,24 @@
+{% extends '_global.twig' %}
+
+{% block title %}{{ parent() }} :: Gallery{% endblock %}
+
+{% block body %}
+<div id="message" class="message hidden">
+	<div id="message_closebutton" class="closebutton"></div>
+	<div id="message_content"></div>
+	<div id="message_refresh_button" class="hidden">
+		<br>
+		<a href="javascript: refresh();">Refresh</a>
+	</div>
+</div>
+<main id="gallery">
+</main>
+<script>
+var baseurl = '{{ baseurl }}';
+var api = '{{ api }}';
+var token = '{{ token }}';
+var show_extension = {{ config['link']['show_extension'] ? 'true' : 'false' }};
+var deletion_confirmation = {{ config['ui']['deletion_confirmation'] ? 'true' : 'false' }};
+var message_timeout = {{ config['ui']['message_timeout'] }};
+</script>
+{% endblock %}

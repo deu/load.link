@@ -1,0 +1,107 @@
+@import 'environment.scss';
+
+.closebutton {
+    width: 10px;
+    height: 10px;
+    border-radius: 30px;
+    background-color: $bg_secondary;
+    display: inline-block;
+    cursor: pointer;
+    &:hover {
+        background-color: #AA0000;
+    }
+}
+
+BODY > DIV, BODY > FORM > DIV {
+    &.hideable H3:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    &.hidden *:not(H3) {
+        display: none;
+    }
+    &.hidden H3 {
+        display: block;
+        margin-bottom: 0;
+    }
+    &.message {
+        &.hidden {
+            display: none;
+        }
+        .closebutton {
+            float: left;
+            margin-top: -5px;
+            margin-left: -25px;
+        }
+    }
+    .uploader {
+        $height: 200px;
+        position: relative;
+        width: 100%;
+        height: $height;
+        background-color: #FFFFFF;
+        border: 1px solid $bg_main;
+        .path, INPUT {
+            position: absolute;
+            width: 100%;
+            height: $height;
+        }
+        .path {
+            z-index: 0;
+            line-height: $height;
+            color: $bg_main;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: {
+                left: 10px;
+                right: 10px;
+            }
+            text-align: center;
+        }
+        INPUT {
+            z-index: 1;
+            opacity: 0;
+        }
+        .progress {
+            text-align: center;
+            .name {
+                margin-top: 45px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            PROGRESS {
+                width: 90%;
+                margin: {
+                    top: 20px;
+                    bottom: 20px;
+                }
+            }
+            TABLE {
+                width: 50%;
+                margin: auto;
+                TD:first-child {
+                    text-align: left;
+                    font-weight: bold;
+                }
+                TD:last-child {
+                    text-align: right;
+                }
+            }
+        }
+    }
+    UL LI {
+        list-style-type: none;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        .closebutton {
+            margin-top: 7px;
+        }
+        A {
+            margin-left: 10px;
+        }
+    }
+}

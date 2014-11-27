@@ -1,0 +1,163 @@
+{% extends '_global.twig' %}
+
+{% block title %}{{ parent() }} :: Panel{% endblock %}
+
+{% set default_uploader_text = 'Choose or drag file here.' %}
+
+{% block body %}
+<div id="message" class="message hidden">
+	<div id="message_closebutton" class="closebutton"></div>
+	<div id="message_content"></div>
+	<div id="message_refresh_button" class="hidden">
+		<br>
+		<a href="javascript: refresh();">Refresh</a>
+	</div>
+</div>
+<div>
+	<h3>Upload</h3>
+	<form id="uploader_form" method="post" action="{{ api }}" enctype="multipart/form-data">
+		<div class="uploader" id="uploader_container">
+			<div class="progress" id="uploader_progress" style="display: none;">
+				<div class="name" id="progress_filename"></div>
+				<progress id="progress_bar"></progress>
+				<table>
+					<tr>
+						<td>Progress</td>
+						<td id="progress_percent"></td>
+					</tr>
+					<tr>
+						<td>Sent</td>
+						<td id="progress_sent"></td>
+					</tr>
+					<tr>
+						<td>Total</td>
+						<td id="progress_total"></td>
+					</tr>
+				</table>
+			</div>
+			<div id="uploader_box">
+				<div id="uploader_path" class="path">{{ default_uploader_text }}</div>
+				<input id="uploader_file" type="file" name="data" multiple>
+			</div>
+		</div>
+		<br>
+		<div class="center"{% if config['ui']['autostart_upload'] %} style="display: none;"{% endif %}>
+			<button id="uploader_button" type="submit">Upload</button>
+		</div>
+	</form>
+</div>
+<div class="hideable hidden">
+	<h3 class="hider">Paste</h3>
+	<form id="paste_form" method="post" action="{{ api }}" enctype="multipart/form-data">
+		<textarea id="paste_text" name="text"></textarea><br>
+		<br>
+		<input id="paste_name" type="text" name="name" placeholder="Name">
+		<select id="paste_language" style="width: 45%; float: right; margin: 0;" name="language">
+			<option value="txt" disabled selected>Language</option>
+{% for name, language in languages %}
+			<option value="{{ language['ext'] }}">{{ language['name'] }}</option>
+{% endfor %}
+		</select>
+		<br>
+		<div class="center">
+			<button type="submit">Paste</button>
+			<button type="reset">Clear</button>
+		</div>
+	</form>
+</div>
+<div class="hideable hidden">
+	<h3 class="hider">Shorten URL</h3>
+	<form id="urlshortener_form" method="post" action="{{ api }}" enctype="multipart/form-data">
+		<input name="url" type="url" style="width: 100%;">
+		<br>
+		<div class="center">
+			<button type="submit">Shorten</button>
+		</div>
+	</form>
+</div>
+<div class="hideable hidden">
+	<h3 class="hider">History</h3>
+	<ul id="link_history" data-api="{{ api }}" data-length="{{ config['ui']['history_length'] }}">
+	</ul>
+	<br>
+	<div class="center">
+		<a href="{{ gallery_path }}">Gallery</a> ~ <a href="javascript: prune_unused();">Prune unused</a>
+	</div>
+</div>
+<div class="hideable hidden">
+	<h3 class="hider">Settings</h3>
+	<form id="settings_form" method="post" action="{{ api }}" enctype="multipart/form-data">
+		<select name="ui[theme]">
+{% for theme in themes %}
+			<option value="{{ theme }}"{% if theme == config['ui']['theme'] %} selected{% endif %}>{{ theme }}</option>
+{% endfor %}
+		</select>
+		Theme.<br>
+		<select name="ui[syntax_highlighter]" class="boolean">
+			<option value="false">NO</option>
+			<option value="true"{% if config['ui']['syntax_highlighter'] %} selected{% endif %}>YES</option>
+		</select>
+		Enable syntax highlighter.<br>
+		<select name="ui[media_player]" class="boolean">
+			<option value="false">NO</option>
+			<option value="true"{% if config['ui']['media_player'] %} selected{% endif %}>YES</option>
+		</select>
+		Enable media player.<br>
+		<br>
+		<select name="link[show_extension]" class="boolean">
+			<option value="false">NO</option>
+			<option value="true"{% if config['link']['show_extension'] %} selected{% endif %}>YES</option>
+		</select>
+		Show file extension in URL.<br>
+		<select name="ui[autostart_upload]" class="boolean">
+			<option value="false">NO</option>
+			<option value="true"{% if config['ui']['autostart_upload'] %} selected{% endif %}>YES</option>
+		</select>
+		Automatically start uploading files.<br>
+		<select name="ui[deletion_confirmation]" class="boolean">
+			<option value="false">NO</option>
+			<option value="true"{% if config['ui']['deletion_confirmation'] %} selected{% endif %}>YES</option>
+		</select>
+		Ask for deletion confirmation.<br>
+		<input name="ui[history_length]" type="number" value="{{ config['ui']['history_length'] }}" required>
+		History length.<br>
+		<input name="ui[message_timeout]" type="number" value="{{ config['ui']['message_timeout'] }}" placeholder="Use 0 to disable." required>
+		Hide messages after N ms.<br>
+		<br>
+		<input name="routing[panel]" type="text" value="{{ config['routing']['panel'] }}">
+		Custom panel URL.<br>
+		<input name="routing[homepage]" type="text" value="{{ config['routing']['homepage'] }}">
+		Custom homepage.<br>
+		<br>
+		<input name="login[username]" type="text" value="{{ config['login']['username'] }}" required>
+		Username.<br>
+		<input name="login[password]" type="password">
+		Password.<br>
+		<br>
+		<input name="current_password" type="password" required>
+		<b>Current Password.</b><br>
+		<br>
+		<div class="center">
+			<button type="submit">Apply</button>
+		</div>
+	</form>
+</div>
+<div class="hideable hidden">
+	<h3 class="hider">Logout</h3>
+	<form method="post" action="{{ logout_path }}">
+		<button type="submit">Logout</button>
+		...and purge all active sessions:
+		<input type="checkbox" name="purge">
+	</form>
+</div>
+<script>
+var baseurl = '{{ baseurl }}';
+var api = '{{ api }}';
+var token = '{{ token }}';
+var default_uploader_text = '{{ default_uploader_text }}';
+var autostart_upload = {{ config['ui']['autostart_upload'] ? 'true' : 'false' }};
+var show_extension = {{ config['link']['show_extension'] ? 'true' : 'false' }};
+var deletion_confirmation = {{ config['ui']['deletion_confirmation'] ? 'true' : 'false' }};
+var message_timeout = {{ config['ui']['message_timeout'] }};
+</script>
+{% endblock %}

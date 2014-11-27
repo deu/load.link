@@ -1,0 +1,19 @@
+{% extends '_global.twig' %}
+
+{% block title %}{{ parent() }} :: Login{% endblock %}
+
+{% block body %}
+<div>
+	<h3>Login</h3>
+	<form method="post" action="{{ login_path }}">
+		<input name="login[username]" type="text" value="{{ config['login']['username'] }}">
+		Username.<br>
+		<input name="login[password]" type="password">
+		Password.<br>
+		<br>
+		<div class="center">
+			<button type="submit">Login</button>
+		</div>
+	</form>
+</div>
+{% endblock %}

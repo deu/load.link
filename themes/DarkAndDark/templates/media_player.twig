@@ -1,0 +1,38 @@
+{% extends '_global.twig' %}
+
+{% block title %}{{ parent() }} :: {{ name }}{% endblock %}
+
+{% block head %}
+{{ parent() -}}
+<link href="{{ static_path }}videojs/video.css" rel="stylesheet">
+<script src="{{ static_path }}videojs/video.js"></script>
+<script>
+	videojs.options.flash.swf = "{{ static_path }}videojs/video.swf";
+</script>
+{% if type == 'audio' %}
+<style>
+	.video-js.vjs-default-skin .vjs-volume-control { margin-right: 10px; }
+</style>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<main>
+	<div class="{{ type }}">
+		<{{ type }} id="media" class="video-js vjs-default-skin vjs-big-play-centered"
+			controls preload="auto" width="800" {% if type == 'audio' -%}
+			height="30"
+			data-setup='{ "children": { "controlBar": { "children": { "fullscreenToggle": false } } } }'
+			autoplay
+			{%- else -%}
+			height="600"
+			data-setup="{}"
+			{%- endif %}>
+			<source src="{{ raw_url }}" type="{{ mime }}">
+		</{{ type }}>
+	</div>
+</main>
+<footer>
+	<a href="{{ raw_url }}">RAW</a>
+</footer>
+{% endblock %}

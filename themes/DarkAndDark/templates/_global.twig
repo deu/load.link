@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+<!-- head { -->
+{% block head %}
+		<meta charset="UTF-8">
+		<title>load.link{% block title %}{% endblock %}</title>
+		{% if css %}<style>{{ css|raw }}</style>{% endif %}
+
+{% endblock %}
+<!-- } (head) -->
+	</head>
+	<body>
+		<header>
+		<a href="
+		{%- if config -%}
+		{{ config['routing']['baseurl'] ~ (config['routing']['panel'] | default('')) }}
+		{%- else -%}
+		javascript: document.location.reload(true);
+		{%- endif -%}
+		">load<em>link</em></a>
+		</header>
+<!-- body { -->
+{% block body %}
+
+{% endblock %}
+<!-- } (body) -->
+		{% if scripts %}<script>{{ scripts|raw }}</script>{% endif %}
+
+	</body>
+</html>

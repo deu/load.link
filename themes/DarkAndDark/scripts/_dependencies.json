@@ -1,0 +1,7 @@
+{
+	"panel": [ "message_popup", "forms", "hideables",
+		"refresh", "bytes_to_hr" ],
+	"gallery": [ "message_popup", "faenzaicons", "refresh" ],
+	"installer": [ "hideables" ],
+	"message": [ "refresh" ]
+}

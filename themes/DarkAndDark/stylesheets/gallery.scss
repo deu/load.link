@@ -1,0 +1,43 @@
+@import 'environment.scss';
+@import 'panel.scss';
+
+MAIN {
+    text-align: center;
+    &>DIV {
+        $size: 200px;
+        width: $size;
+        height: $size;
+        margin: 10px;
+        display: inline-block;
+        background-color: $bg_secondary;
+        border-radius: $border-radius;
+        text-align: center;
+        .closebutton {
+            position: absolute;
+            background-color: $bg_main;
+            margin-top: 10px;
+            margin-left: -90px;
+        }
+        .thumbnail {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            margin: {
+                top: 25px;
+                left: 25px;
+            }
+            display: table;
+            A {
+                display: table-cell;
+                vertical-align: middle;
+                IMG {
+                    margin: auto;
+                }
+                &:hover IMG {
+                        outline: 3px solid $div_color;
+                        outline-offset: -3px;
+                }
+            }
+        }
+    }
+}

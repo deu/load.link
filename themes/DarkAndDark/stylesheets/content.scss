@@ -1,0 +1,24 @@
+@import 'environment.scss';
+
+$margin: 15px;
+
+MAIN {
+    margin: {
+        left: $margin;
+        right: $margin;
+    }
+}
+FOOTER {
+    margin: {
+        top: $margin;
+        bottom: $margin;
+    }
+    text-align: center;
+    font-weight: bold;
+    A {
+        color: $text-color;
+        &:hover {
+            color: $logo_color1;
+        }
+    }
+}

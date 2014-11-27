@@ -1,0 +1,16 @@
+@import 'panel.scss';
+
+BODY > DIV {
+    &#checks {
+        SPAN.result_ok {
+            color: #00AA00;
+        }
+        SPAN.result_no {
+            color: #AA0000;
+        }
+        #all_ok {
+            text-align: center;
+            font-size: 12pt;
+        }
+    }
+}
