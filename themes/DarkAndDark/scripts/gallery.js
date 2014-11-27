@@ -37,6 +37,12 @@ function update_gallery()
 	};
 	xhr.send(data);
 }
+if (typeof String.prototype.startsWith != 'function')
+{
+    String.prototype.startsWith = function (str) {
+        return this.slice(0, str.length) == str;
+    };
+}
 function get_item_content(uid, name, mime, ext, thumbnail)
 {
 	var src, icon, width, height;
