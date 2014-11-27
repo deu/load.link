@@ -20,6 +20,9 @@ function form(form)
 								true : encodeURIComponent(element.value);
 						}
 						break;
+                    case 'url':
+						obj[element.name] = element.value;
+                        break;
 					default:
 						obj[element.name] = encodeURIComponent(element.value);
 						break;

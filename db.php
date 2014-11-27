@@ -69,7 +69,8 @@ class DB
         $sth = $this->dbh->prepare('SELECT * FROM '
             . $this->conf['table_prefix'] . 'links'
             . ' ORDER BY date DESC LIMIT :n');
-        $sth->execute(array(':n' => $n));
+        $sth->bindParam(':n', intval($n), PDO::PARAM_INT);
+        $sth->execute();
         return $sth->fetchAll();
     }
 
@@ -268,6 +269,9 @@ class DB
             // Empty database, so this is actually a GO.
         };
 
+        $date_type = ($this->conf['type'] == 'sqlite') ? 'INTEGER'
+            : 'TIMESTAMP';
+
         $this->dbh->query('
             CREATE TABLE ' . $this->conf['table_prefix'] . 'links
             (
@@ -278,7 +282,7 @@ class DB
                 name    VARCHAR(255),
                 ext     VARCHAR(255),
                 mime    VARCHAR(255),
-                date    INTEGER DEFAULT CURRENT_TIMESTAMP
+                date    ' . $date_type . ' DEFAULT CURRENT_TIMESTAMP
             );');
 
         $this->dbh->query('

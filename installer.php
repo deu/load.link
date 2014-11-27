@@ -89,10 +89,10 @@ class Installer
         );
 
         $gd_required = self::$gd_required_version;
-
         if (extension_loaded('gd'))
         {
-            $gd_found = gd_info()['GD Version'];
+            preg_match('/\d.\d/', gd_info()['GD Version'], $match);
+            $gd_found = $match[0];
             $checks_ok = $gd_result = version_compare(
                 $gd_found, $gd_required, '>=');
         }
@@ -190,7 +190,7 @@ class Installer
             $config = Config::getDefaultConfig();
             $config->set('link', 'upload_dir',
                 pathinfo($_SERVER['SCRIPT_FILENAME'],
-                PATHINFO_DIRNAME) . 'uploads/');
+                PATHINFO_DIRNAME) . '/uploads/');
         }
 
         $page = new Page('installer');

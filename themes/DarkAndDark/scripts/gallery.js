@@ -68,9 +68,50 @@ function get_item_content(uid, name, mime, ext, thumbnail)
 		+		'alt="' + mime + '">'
 		+	'</a>'
 		+ '</div>'
-		+ '<div data-name="' + name + '" '
-		+	'data-uid="' + uid + '" '
-		+	'class="gallery closebutton"></div>';
+		+ '<div class="gallery closebutton"></div>';
+}
+function attach_closebutton(item, closebutton)
+{
+    closebutton.addEventListener('click', function (event) {
+        if (deletion_confirmation)
+        {
+            var confirmed = window.confirm(
+                'Are you sure you want to delete "'
+                + item.getAttribute('data-name') + '"?');
+            if (!confirmed)
+            {
+                return false;
+            }
+        }
+
+        var data = new FormData();
+
+        var headers = {
+            action: 'delete',
+            token: token,
+            uid: item.getAttribute('data-uid')
+        };
+
+        data.append('headers', new Blob([ JSON.stringify(headers) ],
+            { type: 'application/json' }));
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', api, true);
+        xhr.onload = function(r) {
+            switch (this.status)
+            {
+                case 200:
+                    setMessage('notice', 'Item successfully deleted.');
+                    update_gallery();
+                    break;
+                default:
+                    setMessage('error fatal',
+                        'Could not delete item.');
+                    break;
+            }
+        };
+        xhr.send(data);
+    });
 }
 function update_gallery_listeners()
 {
@@ -91,6 +132,9 @@ function update_gallery_listeners()
 		{
 			item.insertAdjacentHTML('beforeend',
 				get_item_content(uid, name, mime, ext));
+            var closebutton = item.getElementsByClassName(
+                'gallery closebutton')[0];
+            attach_closebutton(item, closebutton);
 			return;
 		}
 
@@ -115,58 +159,15 @@ function update_gallery_listeners()
 					var thumbnail = response.thumbnail;
 					item.insertAdjacentHTML('beforeend',
 						get_item_content(uid, name, mime, ext, thumbnail));
+                    var closebutton = item.getElementsByClassName(
+                        'gallery closebutton')[0];
+                    attach_closebutton(item, closebutton);
 					return;
 				default:
 					return null;
 			}
 		};
 		xhr.send(data);
-	});
-
-	var closebuttons = document.getElementsByClassName(
-		'gallery closebutton');
-
-	[].forEach.call(closebuttons, function (element) {
-		element.addEventListener('click', function (event) {
-			if (deletion_confirmation)
-			{
-				var confirmed = window.confirm(
-					'Are you sure you want to delete "'
-					+ element.getAttribute('data-name') + '"?');
-				if (!confirmed)
-				{
-					return false;
-				}
-			}
-
-			var data = new FormData();
-
-			var headers = {
-				action: 'delete',
-				token: token,
-				uid: element.getAttribute('data-uid')
-			};
-
-			data.append('headers', new Blob([ JSON.stringify(headers) ],
-				{ type: 'application/json' }));
-
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', api, true);
-			xhr.onload = function(r) {
-				switch (this.status)
-				{
-					case 200:
-						setMessage('notice', 'Item successfully deleted.');
-						update_gallery();
-						break;
-					default:
-						setMessage('error fatal',
-							'Could not delete item.');
-						break;
-				}
-			};
-			xhr.send(data);
-		});
 	});
 }
 update_gallery();

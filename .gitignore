@@ -1,3 +1,8 @@
 tmp/
 lib/
 themes/DarkAndDark/static/
+uploads/
+.cache
+.config.ini
+.db.sqlite
+make.sh

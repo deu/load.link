@@ -29,9 +29,9 @@ class Utils
 
         try
         {
-            $test_path = $path . '/.test.tmp';
-            $test2_path = $path . '/.test.tmp.2';
-            $test_contents = $path . '/TEST';
+            $test_path = $path . '.test.tmp';
+            $test2_path = $path . '.test.tmp.2';
+            $test_contents = $path . 'TEST';
             $test_file = fopen($test_path, 'w');
             if (!$test_file)
             {
