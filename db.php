@@ -205,7 +205,8 @@ class DB
         $pruned = 0;
         foreach ($links as $link)
         {
-            if (!file_exists($link['path']))
+            if ($link['mime'] != 'wwwserver/redirection'
+                && !file_exists($link['path']))
             {
                 $this->delLink($link['uid']);
                 $pruned++;
