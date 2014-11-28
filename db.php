@@ -59,28 +59,44 @@ class DB
         return $sth->fetch();
     }
 
-    public function getLastNLinks($n)
+    public function getLinks($limit = 0, $offset = 0)
     {
-        if (!$n)
+        $query = 'SELECT * FROM '
+            . $this->conf['table_prefix'] . 'links'
+            . ' ORDER BY date DESC';
+
+        if ($limit)
         {
-            return array();
+            $query .= ' LIMIT :limit';
         }
 
-        $sth = $this->dbh->prepare('SELECT * FROM '
-            . $this->conf['table_prefix'] . 'links'
-            . ' ORDER BY date DESC LIMIT :n');
-        $sth->bindParam(':n', intval($n), PDO::PARAM_INT);
+        if ($offset)
+        {
+            $query .= ' OFFSET :offset';
+        }
+
+        $sth = $this->dbh->prepare($query);
+
+        if ($limit)
+        {
+            $sth->bindParam(':limit', intval($limit), PDO::PARAM_INT);
+        }
+
+        if ($offset)
+        {
+            $sth->bindParam(':offset', intval($offset), PDO::PARAM_INT);
+        }
+
         $sth->execute();
         return $sth->fetchAll();
     }
 
-    public function getAllLinks()
+    public function countLinks()
     {
-        $sth = $this->dbh->prepare('SELECT * FROM '
-            . $this->conf['table_prefix'] . 'links'
-            . ' ORDER BY date DESC');
+        $sth = $this->dbh->prepare('SELECT COUNT(*) FROM '
+            . $this->conf['table_prefix'] . 'links');
         $sth->execute();
-        return $sth->fetchAll();
+        return $sth->fetch()[0];
     }
 
     public function getThumbnail($uid)

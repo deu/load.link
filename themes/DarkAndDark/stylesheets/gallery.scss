@@ -7,7 +7,12 @@ MAIN {
         $size: 200px;
         width: $size;
         height: $size;
-        margin: 10px;
+        margin: {
+            left: 10px;
+            right: 10px;
+            top: 10px;
+            bottom: 5px;
+        }
         display: inline-block;
         background-color: $bg_secondary;
         border-radius: $border-radius;
@@ -34,10 +39,29 @@ MAIN {
                     margin: auto;
                 }
                 &:hover IMG {
-                        outline: 3px solid $div_color;
-                        outline-offset: -3px;
+                    outline: 3px solid $div_color;
+                    outline-offset: -3px;
                 }
             }
         }
+    }
+}
+
+FOOTER {
+    width: 100%;
+    margin: {
+        top: 20px;
+        bottom: 20px;
+    }
+    text-align: center;
+    color: $logo_color1;
+    A {
+        color: $logo_color1;
+        &:hover {
+            color: $logo_color2;
+        }
+    }
+    #gallery_total, #gallery_displayed {
+        color: $logo_color2;
     }
 }

@@ -63,7 +63,7 @@ function upload_files(index)
 	});
 
 	xhr.open('POST', uploader_form.action, true);
-	xhr.onload = function(r) {
+	xhr.onload = function() {
 		switch (this.status)
 		{
 			case 201:
@@ -157,7 +157,7 @@ paste_form.addEventListener('submit', function(event) {
 
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', uploader_form.action, true);
-	xhr.onload = function(r) {
+	xhr.onload = function() {
 		switch (this.status)
 		{
 			case 201:
@@ -235,7 +235,7 @@ urlshortener_form.addEventListener('submit', function(event) {
 
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', urlshortener_form.action, true);
-	xhr.onload = function(r) {
+	xhr.onload = function() {
 		switch (this.status)
 		{
 			case 201:
@@ -287,7 +287,7 @@ settings_form.addEventListener('submit', function(event) {
 
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', settings_form.action, true);
-	xhr.onload = function(r) {
+	xhr.onload = function() {
 		switch (this.status)
 		{
 			case 200:
@@ -315,9 +315,9 @@ function update_history()
 	var data = new FormData();
 
 	var headers = {
-		action: 'get_last_n_links',
+		action: 'get_links',
 		token: token,
-		n: link_history.getAttribute('data-length')
+		limit: link_history.getAttribute('data-length')
 	};
 
 	data.append('headers', new Blob([ JSON.stringify(headers) ],
@@ -325,7 +325,7 @@ function update_history()
 
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', link_history.getAttribute('data-api'), true);
-	xhr.onload = function(r) {
+	xhr.onload = function() {
 		switch (this.status)
 		{
 			case 200:
@@ -386,7 +386,7 @@ function update_history_listeners()
 
 			var xhr = new XMLHttpRequest();
 			xhr.open('POST', link_history.getAttribute('data-api'), true);
-			xhr.onload = function(r) {
+			xhr.onload = function() {
 				switch (this.status)
 				{
 					case 200:
@@ -424,7 +424,7 @@ function prune_unused()
 
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', api, true);
-	xhr.onload = function(r) {
+	xhr.onload = function() {
 		switch (this.status)
 		{
 			case 200:

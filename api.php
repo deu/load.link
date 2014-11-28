@@ -60,6 +60,34 @@ class API
 
         switch ($this->headers['action'])
         {
+            case 'get_links':
+                $limit = (isset($this->headers['limit'])) ?
+                    $this->headers['limit'] : 0;
+                $offset = (isset($this->headers['offset'])) ?
+                    $this->headers['offset'] : 0;
+                $links = DB::get()->getLinks($limit, $offset);
+                $this->setResponse(200, array(
+                    'message' => 'OK.',
+                    'links' => $links
+                ));
+                return;
+
+            case 'get_all_links':
+                $links = DB::get()->getAllLinks();
+                $this->setResponse(200, array(
+                    'message' => 'OK.',
+                    'links' => $links
+                ));
+                return;
+
+            case 'count':
+                $count = DB::get()->countLinks();
+                $this->setResponse(200, array(
+                    'message' => 'OK.',
+                    'count' => $count
+                ));
+                return;
+
             case 'get_thumbnail':
                 $thumbnail = DB::get()->getThumbnail($this->headers['uid']);
                 if ($thumbnail)
@@ -80,22 +108,6 @@ class API
                         'message' => 'Could not get thumbnail.'
                     ));
                 }
-                return;
-
-            case 'get_last_n_links':
-                $links = DB::get()->getLastNLinks($this->headers['n']);
-                $this->setResponse(200, array(
-                    'message' => 'OK.',
-                    'links' => $links
-                ));
-                return;
-
-            case 'get_all_links':
-                $links = DB::get()->getAllLinks();
-                $this->setResponse(200, array(
-                    'message' => 'OK.',
-                    'links' => $links
-                ));
                 return;
 
             case 'upload':

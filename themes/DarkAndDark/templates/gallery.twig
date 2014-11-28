@@ -13,6 +13,9 @@
 </div>
 <main id="gallery">
 </main>
+<footer>
+	<a href="javascript: window.scroll(0, 0);">Top</a> ~ Total: <span id="gallery_total"></span> ~ Displayed: <span id="gallery_displayed"></span> ~ <a href="javascript: gallery_load_more();">Load More</a>
+</footer>
 <script>
 var baseurl = '{{ baseurl }}';
 var api = '{{ api }}';
@@ -20,5 +23,6 @@ var token = '{{ token }}';
 var show_extension = {{ config['link']['show_extension'] ? 'true' : 'false' }};
 var deletion_confirmation = {{ config['ui']['deletion_confirmation'] ? 'true' : 'false' }};
 var message_timeout = {{ config['ui']['message_timeout'] }};
+var gallery_limit = {{ config['ui']['gallery_items'] }};
 </script>
 {% endblock %}
