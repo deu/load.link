@@ -200,7 +200,7 @@ class DB
 
     public function pruneUnused()
     {
-        $links = $this->getAllLinks();
+        $links = $this->getLinks();
 
         $pruned = 0;
         foreach ($links as $link)

@@ -72,14 +72,6 @@ class API
                 ));
                 return;
 
-            case 'get_all_links':
-                $links = DB::get()->getAllLinks();
-                $this->setResponse(200, array(
-                    'message' => 'OK.',
-                    'links' => $links
-                ));
-                return;
-
             case 'count':
                 $count = DB::get()->countLinks();
                 $this->setResponse(200, array(
