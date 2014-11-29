@@ -16,62 +16,62 @@
 		<h3 class="hider">Advanced Configuration</h3>
 		<div>
 			<input name="uuid" type="hidden" value="{{ uuid }}">
-			<select name="database[type]" id="database_type">
+			<label><select name="database[type]" id="database_type">
 {% for type in database_types %}
 				<option value="{{ type['name'] }}"{% if type['name'] == config['database']['type'] %} selected{% endif %}>{{ type['fullname'] }}</option>
 {% endfor %}
 			</select>
-			Database type.<br>
-			<input name="database[name]" type="text" id="database_name" value="{{ config['database']['name'] }}">
-			Database name.<br>
+			Database type.</label><br>
+			<label><input name="database[name]" type="text" id="database_name" value="{{ config['database']['name'] }}">
+			Database name.</label><br>
 			<div id="database_conf" style="display: none;">
-				<input name="database[host]" type="text" value="{{ config['database']['host'] }}" >
-				Database host.<br>
-				<input name="database[port]" type="number" placeholder="default" value="{{ config['database']['port'] }}">
-				Database port.<br>
-				<input name="database[username]" type="text" value="{{ config['database']['username'] }}">
-				Database username.<br>
-				<input name="database[password]" type="password" value="{{ config['database']['password'] }}">
-				Database password.<br>
-				<input name="database[table_prefix]" type="text" value="{{ config['database']['table_prefix'] }}">
-				Database table prefix.<br>
+				<label><input name="database[host]" type="text" value="{{ config['database']['host'] }}" >
+				Database host.</label><br>
+				<label><input name="database[port]" type="number" placeholder="default" value="{{ config['database']['port'] }}">
+				Database port.</label><br>
+				<label><input name="database[username]" type="text" value="{{ config['database']['username'] }}">
+				Database username.</label><br>
+				<label><input name="database[password]" type="password" value="{{ config['database']['password'] }}">
+				Database password.</label><br>
+				<label><input name="database[table_prefix]" type="text" value="{{ config['database']['table_prefix'] }}">
+				Database table prefix.</label><br>
 			</div>
 			<br>
-			<input name="link[upload_dir]" type="text" value="{{ config['link']['upload_dir'] }}">
-			Upload directory.<br>
+			<label><input name="link[upload_dir]" type="text" value="{{ config['link']['upload_dir'] }}">
+			Upload directory.</label><br>
 			<br>
-			<input name="link[length]" type="number" value="{{ config['link']['length'] }}">
-			Link length.<br>
-			<input name="link[characters]" type="text" value="{{ config['link']['characters'] }}">
-			Link characters.<br>
+			<label><input name="link[length]" type="number" value="{{ config['link']['length'] }}">
+			Link length.</label><br>
+			<label><input name="link[characters]" type="text" value="{{ config['link']['characters'] }}">
+			Link characters.</label><br>
 			<br>
-			<select name="routing[mode]" id="routing_mode">
+			<label><select name="routing[mode]" id="routing_mode">
 {% for mode, description in routing_modes %}
 				<option value="{{ mode }}" {% if type['mode'] == config['routing']['mode'] %} selected{% endif %}>{{ description }}</option>
 {% endfor %}
 			</select>
-			Routing mode.<br>
+			Routing mode.</label><br>
 			<div id="routing_conf">
-				<input name="routing[baseurl]" type="text" value="{% if config['routing']['baseurl'] %}{{ config['routing']['baseurl'] }}{% else %}{{ baseurl }}{% endif %}">
-				BaseURL.<br>
+				<label><input name="routing[baseurl]" type="text" value="{% if config['routing']['baseurl'] %}{{ config['routing']['baseurl'] }}{% else %}{{ baseurl }}{% endif %}">
+				BaseURL.</label><br>
 			</div>
 			<br>
 			<div{% if themes|length == 1 %} style="display: none;"{% endif %}>
-				<select name="ui[theme]">
+				<label><select name="ui[theme]">
 {% for theme in themes %}
 					<option value="{{ theme }}"{% if theme == config['ui']['theme'] %} selected{% endif %}>{{ theme }}</option>
 {% endfor %}
 				</select>
-				Theme.<br>
+				Theme.</label><br>
 			</div>
 		</div>
 	</div>
 	<div>
 		<h3>Login Data</h3>
-		<input name="login[username]" type="text" value="{{ config['login']['username'] }}">
-		Username.<br>
-		<input name="login[password]" type="password">
-		Password.<br>
+		<label><input name="login[username]" type="text" value="{{ config['login']['username'] }}">
+		Username.</label><br>
+		<label><input name="login[password]" type="password">
+		Password.</label><br>
 		<br>
 		<div class="center">
 			<button type="submit">Install</button>

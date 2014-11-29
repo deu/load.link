@@ -87,57 +87,57 @@
 <div class="hideable hidden">
 	<h3 class="hider">Settings</h3>
 	<form id="settings_form" method="post" action="{{ api }}" enctype="multipart/form-data">
-		<select name="ui[theme]">
+		<label><select name="ui[theme]">
 {% for theme in themes %}
 			<option value="{{ theme }}"{% if theme == config['ui']['theme'] %} selected{% endif %}>{{ theme }}</option>
 {% endfor %}
 		</select>
-		Theme.<br>
-		<select name="ui[syntax_highlighter]" class="boolean">
+		Theme.</label><br>
+		<label><select name="ui[syntax_highlighter]" class="boolean">
 			<option value="false">NO</option>
 			<option value="true"{% if config['ui']['syntax_highlighter'] %} selected{% endif %}>YES</option>
 		</select>
-		Enable syntax highlighter.<br>
-		<select name="ui[media_player]" class="boolean">
+		Enable syntax highlighter.</label><br>
+		<label><select name="ui[media_player]" class="boolean">
 			<option value="false">NO</option>
 			<option value="true"{% if config['ui']['media_player'] %} selected{% endif %}>YES</option>
 		</select>
-		Enable media player.<br>
+		Enable media player.</label><br>
 		<br>
-		<select name="link[show_extension]" class="boolean">
+		<label><select name="link[show_extension]" class="boolean">
 			<option value="false">NO</option>
 			<option value="true"{% if config['link']['show_extension'] %} selected{% endif %}>YES</option>
 		</select>
-		Show file extension in URL.<br>
-		<select name="ui[autostart_upload]" class="boolean">
+		Show file extension in URL.</label><br>
+		<label><select name="ui[autostart_upload]" class="boolean">
 			<option value="false">NO</option>
 			<option value="true"{% if config['ui']['autostart_upload'] %} selected{% endif %}>YES</option>
 		</select>
-		Automatically start uploading files.<br>
-		<select name="ui[deletion_confirmation]" class="boolean">
+		Automatically start uploading files.</label><br>
+		<label><select name="ui[deletion_confirmation]" class="boolean">
 			<option value="false">NO</option>
 			<option value="true"{% if config['ui']['deletion_confirmation'] %} selected{% endif %}>YES</option>
 		</select>
-		Ask for deletion confirmation.<br>
-		<input name="ui[history_length]" type="number" value="{{ config['ui']['history_length'] }}" required>
-		History length.<br>
-		<input name="ui[message_timeout]" type="number" value="{{ config['ui']['message_timeout'] }}" placeholder="Use 0 to disable." required>
-		Hide messages after N ms.<br>
-		<input name="ui[gallery_items]" type="number" value="{{ config['ui']['gallery_items'] }}" placeholder="Use 0 to display everything." required>
-		Gallery items to display at once.<br>
+		Ask for deletion confirmation.</label><br>
+		<label><input name="ui[history_length]" type="number" value="{{ config['ui']['history_length'] }}" required>
+		History length.</label><br>
+		<label><input name="ui[gallery_items]" type="number" value="{{ config['ui']['gallery_items'] }}" placeholder="Use 0 to display everything." required>
+		Gallery items to display at once.</label><br>
+		<label><input name="ui[message_timeout]" type="number" value="{{ config['ui']['message_timeout'] }}" placeholder="Use 0 to disable." required>
+		Hide messages after N ms.</label><br>
 		<br>
-		<input name="routing[panel]" type="text" value="{{ config['routing']['panel'] }}">
-		Custom panel route.<br>
-		<input name="routing[homepage]" type="url" value="{{ config['routing']['homepage'] }}">
-		Custom homepage.<br>
+		<label><input name="routing[panel]" type="text" value="{{ config['routing']['panel'] }}">
+		Custom panel route.</label><br>
+		<label><input name="routing[homepage]" type="url" value="{{ config['routing']['homepage'] }}">
+		Custom homepage.</label><br>
 		<br>
-		<input name="login[username]" type="text" value="{{ config['login']['username'] }}" required>
-		Username.<br>
-		<input name="login[password]" type="password">
-		Password.<br>
+		<label><input name="login[username]" type="text" value="{{ config['login']['username'] }}" required>
+		Username.</label><br>
+		<label><input name="login[password]" type="password">
+		Password.</label><br>
 		<br>
-		<input name="current_password" type="password" required>
-		<b>Current Password.</b><br>
+		<label><input name="current_password" type="password" required>
+		<b>Current Password.</b></label><br>
 		<br>
 		<div class="center">
 			<button type="submit">Apply</button>

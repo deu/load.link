@@ -6,10 +6,10 @@
 <div>
 	<h3>Login</h3>
 	<form method="post" action="{{ login_path }}">
-		<input name="login[username]" type="text" value="{{ config['login']['username'] }}">
-		Username.<br>
-		<input name="login[password]" type="password">
-		Password.<br>
+		<label><input name="login[username]" type="text" value="{{ config['login']['username'] }}">
+		Username.</label><br>
+		<label><input name="login[password]" type="password">
+		Password.</label><br>
 		<br>
 		<div class="center">
 			<button type="submit">Login</button>

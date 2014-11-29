@@ -7,7 +7,8 @@ var database_default_names = {
 };
 var routing_mode = document.getElementById('routing_mode');
 var routing_conf = document.getElementById('routing_conf');
-database_type.addEventListener('change', function(event) {
+function database_choice()
+{
 	if (database_type.value == 'sqlite')
 	{
 		database_conf.style.display = 'none';
@@ -24,8 +25,13 @@ database_type.addEventListener('change', function(event) {
 			database_name.value = database_default_names['default'];
 		}
 	}
+}
+database_type.addEventListener('change', function(event) {
+	database_choice();
 });
-routing_mode.addEventListener('change', function(event) {
+database_choice();
+function routing_choice()
+{
 	if (routing_mode.value == 'path')
 	{
 		routing_conf.style.display = 'block';
@@ -34,4 +40,8 @@ routing_mode.addEventListener('change', function(event) {
 	{
 		routing_conf.style.display = 'none';
 	}
+}
+routing_mode.addEventListener('change', function(event) {
+	routing_choice();
 });
+routing_choice();
