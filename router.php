@@ -10,6 +10,7 @@ class Router
 
     protected $conf;
     protected $page;
+    protected $baseroute;
 
     public function __construct()
     {
@@ -21,6 +22,9 @@ class Router
 
         $this->conf = Config::get()->getSection('routing');
         $this->page = NULL;
+
+        $this->baseroute = $this->conf['baseurl']
+            . (($this->conf['mode'] == 'get') ? '?' : '');
     }
 
     public function route()
@@ -96,15 +100,15 @@ class Router
                 case self::PANEL_ROUTE:
                     $this->page = new Page('panel');
                     $this->page->set(array(
-                        'baseurl' => $this->conf['baseurl'],
-                        'api' => $this->conf['baseurl'] . API::PATH,
+                        'baseroute' => $this->baseroute,
+                        'api' => $this->baseroute . API::PATH,
                         'token' => $this->auth->getToken(),
                         'languages' => Utils::getLanguagesList(),
                         'config' => Config::get()->getAll(),
                         'themes' => Utils::getThemes(),
-                        'gallery_path' => $this->conf['baseurl']
+                        'gallery_path' => $this->baseroute
                             . self::GALLERY_PATH,
-                        'logout_path' => $this->conf['baseurl']
+                        'logout_path' => $this->baseroute
                             . Auth::LOGOUT_PATH));
                     return;
 
@@ -129,8 +133,8 @@ class Router
                 case self::GALLERY_PATH:
                     $this->page = new Page('gallery');
                     $this->page->set(array(
-                        'baseurl' => $this->conf['baseurl'],
-                        'api' => $this->conf['baseurl'] . API::PATH,
+                        'baseroute' => $this->baseroute,
+                        'api' => $this->baseroute . API::PATH,
                         'token' => $this->auth->getToken(),
                         'config' => Config::get()->getAll(),
                     ));
@@ -145,8 +149,7 @@ class Router
                 case self::PANEL_ROUTE:
                     $this->page = new Page('login');
                     $this->page->set(array(
-                        'login_path' => $this->conf['baseurl']
-                            . Auth::LOGIN_PATH));
+                        'login_path' => $this->baseroute . Auth::LOGIN_PATH));
                     return;
 
                 /* Login */
@@ -232,9 +235,13 @@ class Router
                 || ($https && $_SERVER['SERVER_PORT'] != 443)) ?
                 ':' . $_SERVER['SERVER_PORT'] : '';
 
+            $query = (Config::get()->getValue('routing', 'mode') == 'get') ?
+                '?' : '';
+
             self::$baseurl = 'http' . $https . '://'
                 . $_SERVER['SERVER_NAME'] . $port
-                . Config::get()->getValue('routing', 'baseurl');
+                . Config::get()->getValue('routing', 'baseurl')
+                . $query;
         }
         return self::$baseurl;
     }

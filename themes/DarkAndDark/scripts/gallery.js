@@ -108,12 +108,12 @@ function generate_item_content(uid, name, mime, ext, thumbnail)
 			icon = (mime.startsWith('video/')) ? 'video-x-generic.png'
 				: 'none.png';
 		}
-		src = baseurl + 'static/faenzaicons/' + icon;
+		src = baseroute + 'static/faenzaicons/' + icon;
 		width = height = 96;
 	}
 
 	return '<div class="thumbnail">'
-		+	'<a href="' + baseurl
+		+	'<a href="' + baseroute
 		+		uid + ((show_extension) ? '.' + ext : '') + '" '
 		+	'title="' + name + ' (' + mime + ')" target="_blank">'
 		+		'<img '

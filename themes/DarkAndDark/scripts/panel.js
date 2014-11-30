@@ -335,7 +335,7 @@ function update_history()
 					link_history.insertAdjacentHTML('beforeend',
 						'<li><div class="history_item closebutton" data-uid="'
 						+ item.uid + '" data-name="' + item.name + '"></div>'
-						+ '<a class="historyitem link" href="' + baseurl
+						+ '<a class="historyitem link" href="' + baseroute
 						+ item.uid + ((show_extension) ? '.' + item.ext : '')
 						+ '" title="' + item.mime + '" target="_blank">'
 						+ item.name + '</a> (<i>' + item.mime + '</i>)</li>');
