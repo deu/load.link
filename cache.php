@@ -5,8 +5,6 @@
 
 class Cache
 {
-    const PATH = '.cache';
-
     protected static $cache;
     public static function get()
     {
@@ -22,8 +20,8 @@ class Cache
 
     public function __construct()
     {
-        $this->entities = (file_exists(self::PATH)) ?
-            unserialize(file_get_contents(self::PATH)) : array();
+        $this->entities = (file_exists(Path::get('cache'))) ?
+            unserialize(file_get_contents(Path::get('cache'))) : array();
 
         $this->modified = FALSE;
     }
@@ -58,7 +56,7 @@ class Cache
     {
         if ($this->modified)
         {
-            file_put_contents(self::PATH, serialize($this->entities));
+            file_put_contents(Path::get('cache'), serialize($this->entities));
         }
     }
 }

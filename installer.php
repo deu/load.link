@@ -5,9 +5,6 @@
 
 class Installer
 {
-    const CONFIG_TMP = '.config.tmp';
-    const CONFIG_BACKUP = '.config.backup';
-
     protected static $php_required_version = '5.4';
     protected static $gd_required_version = '2.0';
     protected static $pecl_extensions = array(
@@ -41,7 +38,7 @@ class Installer
             exit();
         }
 
-        if (file_exists(self::CONFIG_TMP))
+        if (file_exists(Path::get('config_tmp')))
         {
             $this->install();
         }
@@ -180,9 +177,9 @@ class Installer
 
         $checks = $this->checks();
 
-        if (file_exists(self::CONFIG_BACKUP))
+        if (file_exists(Path::get('config_backup')))
         {
-            $config = new Config(self::CONFIG_BACKUP);
+            $config = new Config(Path::get('config_backup'));
             $config->read();
         }
         else
@@ -222,7 +219,7 @@ class Installer
         $password = $_POST['login']['password'];
         unset($_POST['login']['password']);
 
-        $config = Config::newFromArray(self::CONFIG_TMP,
+        $config = Config::newFromArray(Path::get('config_tmp'),
             Config::getDefaultConfig(), $_POST);
 
         $config->setPassword($password);
@@ -249,7 +246,7 @@ class Installer
         $abort = NULL;
         try
         {
-            rename(self::CONFIG_TMP, Config::PATH);
+            rename(Path::get('config_tmp'), Path::get('config'));
 
             $config = Config::get();
             $config->check();
@@ -273,14 +270,14 @@ class Installer
 
         if ($abort)
         {
-            rename(Config::PATH, self::CONFIG_BACKUP);
+            rename(Config::PATH, Path::get('config_backup'));
             $abort->getPage()->render();
             exit();
         }
 
-        if (file_exists(self::CONFIG_BACKUP))
+        if (file_exists(Path::get('config_backup')))
         {
-            unlink(self::CONFIG_BACKUP);
+            unlink(Path::get('config_backup'));
         }
 
         $info = new Info('Installed. Redirecting...', TRUE);

@@ -5,8 +5,6 @@
 
 class Config
 {
-    const PATH = '.config.ini';
-
     protected static $config;
     public static function get()
     {
@@ -17,7 +15,7 @@ class Config
 
         if (!self::$config)
         {
-            self::$config = new self(self::PATH);
+            self::$config = new self(Path::get('config'));
             self::$config->read();
         }
         return self::$config;
@@ -34,7 +32,7 @@ class Config
     {
         if (!self::$exists)
         {
-            self::$exists = file_exists(self::PATH);
+            self::$exists = file_exists(Path::get('config'));
         }
         return self::$exists;
     }
@@ -49,7 +47,7 @@ class Config
         {
             $this->path = $path;
 
-            if (self::exists() && $path == self::PATH)
+            if (self::exists() && $path == Path::get('config'))
             {
                 $this->cache = Cache::get();
             }
