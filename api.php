@@ -110,6 +110,10 @@ class API
                 {
                     $this->setResponse(201, array(
                         'message' => 'OK.',
+                        'uid' => $upload->getUID(),
+                        'name' => $upload->getName(),
+                        'mime' => $upload->getMime(),
+                        'ext' => $upload->getExt(),
                         'link' => $upload->getLink()
                     ));
                 }
@@ -127,6 +131,7 @@ class API
                 {
                     $this->setResponse(201, array(
                         'message' => 'OK.',
+                        'uid' => $shortener->getUID(),
                         'link' => $shortener->getLink()
                     ));
                 }
@@ -155,7 +160,7 @@ class API
                 }
                 try
                 {
-                    $config = Config::newFromArray(Config::PATH,
+                    $config = Config::newFromArray(Path::get('config'),
                         Config::get(), $this->headers['settings']);
 
                     $new_password = $this->headers[
@@ -176,7 +181,6 @@ class API
                     ));
                     return;
                 }
-
                 $this->setResponse(200, array(
                     'message' => 'OK.',
                 ));

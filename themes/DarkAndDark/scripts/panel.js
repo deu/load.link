@@ -15,6 +15,86 @@ function basename(path)
 {
 	return path.match(/[^\/\\]+$/)[0];
 }
+function uploadMessage(response, text)
+{
+	if (!display_thumbnail)
+	{
+		setMessage('notice', text);
+		return;
+	}
+
+	var src, icon, width, height;
+
+	if ([ 'image/jpeg', 'image/png', 'image/gif'
+		].indexOf(response.mime) == -1)
+	{
+		icon = response.mime.replace('/', '-') + '.png';
+		if (faenzaicons.indexOf(icon) < 0)
+		{
+			icon = (response.mime.startsWith('video/')) ? 'video-x-generic.png'
+				: 'none.png';
+		}
+		src = baseroute + 'static/faenzaicons/' + icon;
+		width = height = 96;
+
+		setMessage('notice', text + '<br>'
+			+ '<a href="' + response.link + '" '
+			+ 'title="' + response.name + '" target="_blank">'
+			+ '<div>'
+			+ 	'<img '
+			+ 	'width="' + width + '" height="' + height + '" '
+			+ 	'src="' + src + '" '
+			+ 	'alt="' + response.mime + '">'
+			+ '</div>'
+			+ '</a>');
+
+		return;
+	}
+
+	var data = new FormData();
+
+	var headers = {
+		action: 'get_thumbnail',
+		token: token,
+		uid: response.uid
+	};
+
+	data.append('headers', new Blob([ JSON.stringify(headers) ],
+		{ type: 'application/json' }));
+
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', api, true);
+	xhr.onload = function() {
+		switch (this.status)
+		{
+			case 200:
+				var thumbnail = JSON.parse(this.response).thumbnail;
+
+				src = 'data:' + thumbnail.mime + ';base64,' + thumbnail.data;
+				width = thumbnail.width;
+				height = thumbnail.height;
+
+				setMessage('notice', text + '<br>'
+					+ '<a href="' + response.link + '" '
+					+ 'title="' + response.name + '" target="_blank">'
+					+ '<div style="padding-top: 5px;">'
+					+ 	'<img '
+					+ 	'width="' + width + '" height="' + height + '" '
+					+ 	'src="' + src + '" '
+					+ 	'alt="' + response.mime + '">'
+					+ '</div>'
+					+ '</a>');
+
+				return;
+
+			case 202:
+			default:
+				setMessage('notice', text);
+				return;
+		}
+	};
+	xhr.send(data);
+}
 function upload_files(index)
 {
 	var items = uploader_file.files.length;
@@ -67,16 +147,18 @@ function upload_files(index)
 		switch (this.status)
 		{
 			case 201:
-				response = JSON.parse(this.responseText);
-				setMessage('notice', 'Uploaded!<br>'
-					+ '<a target="_blank" href="' + response.link + '">'
+				var response = JSON.parse(this.responseText);
+				uploadMessage(response, 'Uploaded!<br>'
+					+ '<a target="_blank" '
+					+	'title="' + response.name + '" '
+					+	'href="' + response.link + '">'
 					+ response.link + '</a>');
 				uploader_path.innerHTML = default_uploader_text;
 				uploader_filename = '';
 				update_history();
 				break;
 			case 202:
-				response = JSON.parse(this.responseText);
+				var response = JSON.parse(this.responseText);
 				setMessage('error warning',
 					response.message.replace(/(?:\r\n|\r|\n)/g, '<br>'));
 				break;
@@ -161,14 +243,14 @@ paste_form.addEventListener('submit', function(event) {
 		switch (this.status)
 		{
 			case 201:
-				response = JSON.parse(this.responseText);
+				var response = JSON.parse(this.responseText);
 				setMessage('notice', 'Pasted!<br>'
 					+ '<a target="_blank" href="' + response.link + '">'
 					+ response.link + '</a>');
 				update_history();
 				break;
 			case 202:
-				response = JSON.parse(this.responseText);
+				var response = JSON.parse(this.responseText);
 				setMessage('error warning',
 					response.message.replace(/(?:\r\n|\r|\n)/g, '<br>'));
 				break;
@@ -239,7 +321,7 @@ urlshortener_form.addEventListener('submit', function(event) {
 		switch (this.status)
 		{
 			case 201:
-				response = JSON.parse(this.responseText);
+				var response = JSON.parse(this.responseText);
 				setMessage('notice', 'URL shortened!<br>'
 					+ '<a target="_blank" href="' + response.link + '">'
 					+ response.link + '</a>');
@@ -247,7 +329,7 @@ urlshortener_form.addEventListener('submit', function(event) {
 				update_history();
 				break;
 			case 202:
-				response = JSON.parse(this.responseText);
+				var response = JSON.parse(this.responseText);
 				setMessage('error warning',
 					response.message.replace(/(?:\r\n|\r|\n)/g, '<br>'));
 				break;
@@ -296,7 +378,7 @@ settings_form.addEventListener('submit', function(event) {
 				settings_form.current_password.value = '';
 				break;
 			case 202:
-				response = JSON.parse(this.responseText);
+				var response = JSON.parse(this.responseText);
 				setMessage('error warning',
 					response.message.replace(/(?:\r\n|\r|\n)/g, '<br>'));
 				break;

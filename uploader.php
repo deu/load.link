@@ -10,6 +10,7 @@ class Uploader
     protected $name;
     protected $path;
     protected $mime;
+    protected $ext;
     protected $uid;
 
     public function __construct($name, $tmp_path)
@@ -20,6 +21,7 @@ class Uploader
 
         $this->name = $name;
         $this->mime = Utils::detectMime($tmp_path);
+        $this->ext = pathinfo($this->name, PATHINFO_EXTENSION);
 
         $this->path = $this->conf['upload_dir'] . $this->name;
         while (file_exists($this->path))
@@ -47,6 +49,26 @@ class Uploader
         }
     }
 
+    public function getUID()
+    {
+        return $this->uid;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getMime()
+    {
+        return $this->mime;
+    }
+
+    public function getExt()
+    {
+        return $this->ext;
+    }
+
     public function getLink()
     {
         if (!$this->uid)
@@ -55,10 +77,9 @@ class Uploader
                 'UID not found.');
         }
 
-        $ext = pathinfo($this->name, PATHINFO_EXTENSION);
-
         return Router::getURL() . $this->uid
-            . (($ext && Config::get()->getValue('link', 'show_extension')) ?
-                '.' . $ext : '');
+            . (($this->ext
+                && Config::get()->getValue('link', 'show_extension')) ?
+                '.' . $this->ext : '');
     }
 }

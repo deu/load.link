@@ -29,6 +29,11 @@ class Shortener
         return TRUE;
     }
 
+    public function getUID()
+    {
+        return $this->uid;
+    }
+
     public function getLink()
     {
         if (!$this->uid)

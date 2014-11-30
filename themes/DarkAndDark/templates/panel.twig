@@ -114,6 +114,11 @@
 			<option value="true"{% if config['ui']['autostart_upload'] %} selected{% endif %}>YES</option>
 		</select>
 		Automatically start uploading files.</label><br>
+		<label><select name="ui[display_thumbnail]" class="boolean">
+			<option value="false">NO</option>
+			<option value="true"{% if config['ui']['display_thumbnail'] %} selected{% endif %}>YES</option>
+		</select>
+		Display thumbnail after upload.</label><br>
 		<label><select name="ui[deletion_confirmation]" class="boolean">
 			<option value="false">NO</option>
 			<option value="true"{% if config['ui']['deletion_confirmation'] %} selected{% endif %}>YES</option>
@@ -158,6 +163,7 @@ var api = '{{ api }}';
 var token = '{{ token }}';
 var default_uploader_text = '{{ default_uploader_text }}';
 var autostart_upload = {{ config['ui']['autostart_upload'] ? 'true' : 'false' }};
+var display_thumbnail = {{ config['ui']['display_thumbnail'] ? 'true' : 'false' }};
 var show_extension = {{ config['link']['show_extension'] ? 'true' : 'false' }};
 var deletion_confirmation = {{ config['ui']['deletion_confirmation'] ? 'true' : 'false' }};
 var message_timeout = {{ config['ui']['message_timeout'] }};
