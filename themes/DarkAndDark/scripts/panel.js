@@ -11,10 +11,6 @@ var progress_filename = document.getElementById('progress_filename');
 var progress_percent = document.getElementById('progress_percent');
 var progress_sent = document.getElementById('progress_sent');
 var progress_total = document.getElementById('progress_total');
-function basename(path)
-{
-	return path.match(/[^\/\\]+$/)[0];
-}
 function uploadMessage(response, text)
 {
 	if (!display_thumbnail)
@@ -106,7 +102,7 @@ function upload_files(index)
 	var headers = {
 		action: 'upload',
 		token: token,
-		filename: basename(file.name)
+		filename: file.name
 	};
 
 	data.append('headers', new Blob([ JSON.stringify(headers) ],
@@ -127,7 +123,7 @@ function upload_files(index)
 		progress_total.innerHTML = '';
 		progress_filename.innerHTML = ((items > 1)
 			? '(' + (index + 1) + '/' + items + ') ' : '')
-			+ basename(file.name);
+			+ file.name;
 	});
 
 	xhr.upload.addEventListener("progress", function(event) {
@@ -176,7 +172,7 @@ function upload_files(index)
 		}
 		else
 		{
-			upload_files(next)
+			upload_files(next);
 		}
 	};
 	xhr.send(data);
@@ -189,17 +185,17 @@ uploader_form.addEventListener('submit', function(event) {
 		return false;
 	}
 
-	upload_files()
+	upload_files();
 });
 uploader_file.addEventListener('change', function(event) {
 	uploader_shownname = (this.files.length == 1)
-		? basename(this.value)
+		? this.files[0].name
 		: this.files.length + ' files selected.';
 	uploader_path.innerHTML = uploader_shownname;
 
 	if (autostart_upload)
 	{
-		upload_files()
+		upload_files();
 	}
 });
 /* Paste */

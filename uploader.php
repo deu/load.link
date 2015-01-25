@@ -19,6 +19,8 @@ class Uploader
 
         $this->tmp_path = $tmp_path;
 
+        $name = str_replace('\\', '\\\\', $name);
+        $name = str_replace('"', '\"', $name);
         $this->name = $name;
         $this->mime = Utils::detectMime($tmp_path);
         $this->ext = pathinfo($this->name, PATHINFO_EXTENSION);
