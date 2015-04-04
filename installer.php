@@ -270,7 +270,7 @@ class Installer
 
         if ($abort)
         {
-            rename(Config::PATH, Path::get('config_backup'));
+            rename(Path::get('config'), Path::get('config_backup'));
             $abort->getPage()->render();
             exit();
         }
