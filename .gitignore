@@ -4,5 +4,6 @@ themes/DarkAndDark/static/
 uploads/
 .cache
 .config.ini
+.config.ini.backup
 .db.sqlite
 make.sh
