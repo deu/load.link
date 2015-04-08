@@ -3,12 +3,12 @@
 Easily upload files (and paste things, and shorten URLs) to your HTTP server and share them with your friends using a nice link.
 
 
-### Work in progress
+## Work in progress
 
 Everything. Updates coming soon. Maybe.
 
 
-### API
+## API
 
 Every function is accessible from the HTTP/JSON API.
 - All requests must be sent to api.php
@@ -16,11 +16,11 @@ Every function is accessible from the HTTP/JSON API.
 - All requests must have a header part with `Content-Disposition: form-data; name="headers"` for the actual JSON request.
 
 
-**get_token**
+### get_token
 
 Get an authentication token to be used with other requests.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'get_token',
@@ -29,7 +29,7 @@ Get an authentication token to be used with other requests.
         'password': '<YOUR_PASSWORD>' } }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -38,7 +38,7 @@ HTML Status Code: 200
   'token': '<TOKEN>' }
 ```
 
-*OR*
+##### OR
 
 HTML Status Code: 403
 
@@ -47,11 +47,11 @@ HTML Status Code: 403
 ```
 
 
-**get_links**
+### get_links
 
 Get <LIMIT> links starting from <OFFSET>.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'get_links',
@@ -60,7 +60,7 @@ Get <LIMIT> links starting from <OFFSET>.
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -75,18 +75,18 @@ HTML Status Code: 200
 ```
 
 
-**count**
+### count
 
 Get the <TOTAL> number of items.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'count',
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -95,18 +95,18 @@ HTML Status Code: 200
   'count': <TOTAL> }
 ```
 
-**get_thumbnail**
+### get_thumbnail
 
 Get the thumbnail (base64 encoded) of an image item.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'get_thumbnail',
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -118,7 +118,7 @@ HTML Status Code: 200
                  'mime': '<THUMBNAIL_MIMETYPE>' } }
 ```
 
-*OR*
+##### OR
 
 HTML Status Code: 202
 
@@ -127,11 +127,11 @@ HTML Status Code: 202
 ```
 
 
-**upload**
+### upload
 
 Upload an item. In this case you need another part with `Content-Disposition: form-data; name="data"` for the actual file data.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'upload',
@@ -139,7 +139,7 @@ Upload an item. In this case you need another part with `Content-Disposition: fo
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 201
 
@@ -152,7 +152,7 @@ HTML Status Code: 201
   'link': '<ITEM_LINK>' }
 ```
 
-*OR*
+##### OR
 
 HTML Status Code: 202
 
@@ -161,11 +161,11 @@ HTML Status Code: 202
 ```
 
 
-**shorten_url**
+### shorten_url
 
 Shorten an URL.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'upload',
@@ -173,7 +173,7 @@ Shorten an URL.
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 201
 
@@ -183,7 +183,7 @@ HTML Status Code: 201
   'link': '<ITEM_LINK>' }
 ```
 
-*OR*
+##### OR
 
 HTML Status Code: 202
 
@@ -192,11 +192,11 @@ HTML Status Code: 202
 ```
 
 
-**delete**
+### delete
 
 Delete an item by its UID.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'delete',
@@ -204,7 +204,7 @@ Delete an item by its UID.
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -213,13 +213,13 @@ HTML Status Code: 200
 ```
 
 
-**edit_settings**
+### edit_settings
 
 Edit any of the settings you can find in default_settings.ini. Any number of them can be put inside the "settings" dictionary.
 
 Be aware that this requires the password to be sent to the API. Just the authentication token isn't enough.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'edit_settings',
@@ -228,7 +228,7 @@ Be aware that this requires the password to be sent to the API. Just the authent
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -236,7 +236,7 @@ HTML Status Code: 200
 { 'message': 'OK.' }
 ```
 
-*OR*
+##### OR
 
 HTML Status Code: 202
 
@@ -244,7 +244,7 @@ HTML Status Code: 202
 { 'message': 'Could not update settings. Reason: <ERROR_MESSAGE>' }
 ```
 
-*OR*
+##### OR
 
 HTML Status Code: 403
 
@@ -253,18 +253,18 @@ HTML Status Code: 403
 ```
 
 
-**release_token**
+### release_token
 
 Release the current authorization token.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'release_token',
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -273,18 +273,18 @@ HTML Status Code: 200
 ```
 
 
-**release_all_tokens**
+### release_all_tokens
 
 Release all authorization tokens.
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'release_all_tokens',
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -293,18 +293,18 @@ HTML Status Code: 200
 ```
 
 
-**prune_unused**
+### prune_unused
 
 Prune unused links (i.e. delete database entries for the items whose associated files you have manually deleted from the server).
 
-*REQUEST*
+#### REQUEST
 
 ```
 { 'action': 'prune_unused',
   'token': '<YOUR_AUTHENTICATION_TOKEN>' }
 ```
 
-*RESPONSE*
+#### RESPONSE
 
 HTML Status Code: 200
 
@@ -320,7 +320,7 @@ If your request is badly formatted you'll get the following response:
 { 'message': 'Badly Formatted Request.' }
 ```
 
-### You may also be interested in...
+## You may also be interested in...
 
 If you like Go or (rightfully) hate PHP you should take a look at [moshee/airlift](https://github.com/moshee/airlift). Also his CLI client has a cooler progress bar.
 
