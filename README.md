@@ -1,4 +1,4 @@
-#load.link
+# load.link
 
 Easily upload files (and paste things, and shorten URLs) to your HTTP server and share them with your friends using a nice link.
 
@@ -8,15 +8,15 @@ Easily upload files (and paste things, and shorten URLs) to your HTTP server and
 Everything. Updates coming soon. Maybe.
 
 
-## API
+# API
 
 Every function is accessible from the HTTP/JSON API.
-- All requests must be sent to api.php
+- All requests must be sent to `api.php`
 - All requests must be of `Content-Type: multipart/form-data`
 - All requests must have a header part with `Content-Disposition: form-data; name="headers"` for the actual JSON request.
 
 
-### get_token
+## get_token
 
 Get an authentication token to be used with other requests.
 
@@ -47,7 +47,7 @@ HTML Status Code: 403
 ```
 
 
-### get_links
+## get_links
 
 Get <LIMIT> links starting from <OFFSET>.
 
@@ -75,7 +75,7 @@ HTML Status Code: 200
 ```
 
 
-### count
+## count
 
 Get the <TOTAL> number of items.
 
@@ -95,7 +95,7 @@ HTML Status Code: 200
   'count': <TOTAL> }
 ```
 
-### get_thumbnail
+## get_thumbnail
 
 Get the thumbnail (base64 encoded) of an image item.
 
@@ -127,7 +127,7 @@ HTML Status Code: 202
 ```
 
 
-### upload
+## upload
 
 Upload an item. In this case you need another part with `Content-Disposition: form-data; name="data"` for the actual file data.
 
@@ -161,7 +161,7 @@ HTML Status Code: 202
 ```
 
 
-### shorten_url
+## shorten_url
 
 Shorten an URL.
 
@@ -192,7 +192,7 @@ HTML Status Code: 202
 ```
 
 
-### delete
+## delete
 
 Delete an item by its UID.
 
@@ -213,7 +213,7 @@ HTML Status Code: 200
 ```
 
 
-### edit_settings
+## edit_settings
 
 Edit any of the settings you can find in default_settings.ini. Any number of them can be put inside the "settings" dictionary.
 
@@ -253,7 +253,7 @@ HTML Status Code: 403
 ```
 
 
-### release_token
+## release_token
 
 Release the current authorization token.
 
@@ -273,7 +273,7 @@ HTML Status Code: 200
 ```
 
 
-### release_all_tokens
+## release_all_tokens
 
 Release all authorization tokens.
 
@@ -293,7 +293,7 @@ HTML Status Code: 200
 ```
 
 
-### prune_unused
+## prune_unused
 
 Prune unused links (i.e. delete database entries for the items whose associated files you have manually deleted from the server).
 
@@ -320,7 +320,6 @@ If your request is badly formatted you'll get the following response:
 { 'message': 'Badly Formatted Request.' }
 ```
 
-## You may also be interested in...
+# You may also be interested in...
 
 If you like Go or (rightfully) hate PHP you should take a look at [moshee/airlift](https://github.com/moshee/airlift). Also his CLI client has a cooler progress bar.
-
