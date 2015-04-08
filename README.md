@@ -49,7 +49,7 @@ HTML Status Code: **403**
 
 ## get_links
 
-Get <LIMIT> links starting from <OFFSET>.
+Get \<LIMIT\> links starting from \<OFFSET\>.
 
 #### REQUEST
 
@@ -77,7 +77,7 @@ HTML Status Code: **200**
 
 ## count
 
-Get the <TOTAL> number of items.
+Get the \<TOTAL\> number of items.
 
 #### REQUEST
 
@@ -194,7 +194,7 @@ HTML Status Code: **202**
 
 ## delete
 
-Delete an item by its <UID>.
+Delete an item by its \<UID\>.
 
 #### REQUEST
 
