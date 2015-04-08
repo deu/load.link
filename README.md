@@ -24,9 +24,8 @@ Get an authentication token to be used with other requests.
 
 ```
 { "action": "get_token",
-  "login": {
-      "username": "<YOUR_USERNAME>",
-      "password": "<YOUR_PASSWORD>" } }
+  "login": { "username": "<YOUR_USERNAME>",
+             "password": "<YOUR_PASSWORD>" } }
 ```
 
 #### RESPONSE
