@@ -374,6 +374,7 @@ settings_form.addEventListener('submit', function(event) {
 				settings_form.current_password.value = '';
 				break;
 			case 202:
+			case 403:
 				var response = JSON.parse(this.responseText);
 				setMessage('error warning',
 					response.message.replace(/(?:\r\n|\r|\n)/g, '<br>'));

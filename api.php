@@ -21,7 +21,7 @@ class API
         catch (Exception $e)
         {
             $this->setResponse(400, array(
-                'message' => 'Badly formatted request.'
+                'message' => 'Badly Formatted Request.'
             ));
         }
     }
@@ -153,7 +153,7 @@ class API
             case 'edit_settings':
                 if (!Auth::checkPassword($this->headers['password']))
                 {
-                    $this->setResponse(202, array(
+                    $this->setResponse(403, array(
                         'message' => 'Could not update settings: '
                         . 'wrong password.'));
                     return;
@@ -209,7 +209,7 @@ class API
                 return;
 
             default:
-                throw new Exception('Badly Formatted.');
+                throw new Exception('Unknown API function.');
         }
     }
 
