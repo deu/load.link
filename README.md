@@ -249,7 +249,7 @@ HTML Status Code: **202**
 HTML Status Code: **403**
 
 ```
-{ "message": "Could not update settings: wrong password.." }
+{ "message": "Could not update settings: wrong password." }
 ```
 
 
