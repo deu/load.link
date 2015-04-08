@@ -23,10 +23,10 @@ Get an authentication token to be used with other requests.
 #### REQUEST
 
 ```
-{ 'action': 'get_token',
-   'login': {
-        'username': '<YOUR_USERNAME>',
-        'password': '<YOUR_PASSWORD>' } }
+{ "action": "get_token",
+   "login": {
+        "username": "<YOUR_USERNAME>",
+        "password": "<YOUR_PASSWORD>" } }
 ```
 
 #### RESPONSE
@@ -34,8 +34,8 @@ Get an authentication token to be used with other requests.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.',
-  'token': '<TOKEN>' }
+{ "message": "OK.",
+  "token": "<TOKEN>" }
 ```
 
 ##### OR
@@ -43,7 +43,7 @@ HTML Status Code: **200**
 HTML Status Code: **403**
 
 ```
-{ 'message': 'Access Denied.' }
+{ "message": "Access Denied." }
 ```
 
 
@@ -54,10 +54,10 @@ Get \<LIMIT\> links starting from \<OFFSET\>.
 #### REQUEST
 
 ```
-{ 'action': 'get_links',
-  'limit': '<LIMIT>',
-  'offset': '<OFFSET>',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "get_links",
+  "limit": "<LIMIT>",
+  "offset": "<OFFSET>",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -65,12 +65,12 @@ Get \<LIMIT\> links starting from \<OFFSET\>.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.',
-  [ { 'uid': '<ITEM_UID>',
-      'path': '<ITEM_PATH>',
-      'name': '<ITEM_NAME>',
-      'ext': '<ITEM_EXTENSION>',
-      'mime': '<ITEM_MIMETYPE>' },
+{ "message": "OK.",
+  [ { "uid": "<ITEM_UID>",
+      "path": "<ITEM_PATH>",
+      "name": "<ITEM_NAME>",
+      "ext": "<ITEM_EXTENSION>",
+      "mime": "<ITEM_MIMETYPE>" },
     ... ] }
 ```
 
@@ -82,8 +82,8 @@ Get the \<TOTAL\> number of items.
 #### REQUEST
 
 ```
-{ 'action': 'count',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "count",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -91,8 +91,8 @@ Get the \<TOTAL\> number of items.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.',
-  'count': <TOTAL> }
+{ "message": "OK.",
+  "count": <TOTAL> }
 ```
 
 ## get_thumbnail
@@ -102,8 +102,8 @@ Get the thumbnail (base64 encoded) of an image item.
 #### REQUEST
 
 ```
-{ 'action': 'get_thumbnail',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "get_thumbnail",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -111,11 +111,11 @@ Get the thumbnail (base64 encoded) of an image item.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.',
-  'thumbnail': { 'data': '<BASE64_ENCODED_THUMBNAIL>',
-                 'width': '<THUMBNAIL_WIDTH>',
-                 'height': '<THUMBNAIL_HEIGHT>',
-                 'mime': '<THUMBNAIL_MIMETYPE>' } }
+{ "message": "OK.",
+  "thumbnail": { "data": "<BASE64_ENCODED_THUMBNAIL>",
+                 "width": "<THUMBNAIL_WIDTH>",
+                 "height": "<THUMBNAIL_HEIGHT>",
+                 "mime": "<THUMBNAIL_MIMETYPE>" } }
 ```
 
 ##### OR
@@ -123,7 +123,7 @@ HTML Status Code: **200**
 HTML Status Code: **202**
 
 ```
-{ 'message': 'Could not get thumbnail.' }
+{ "message": "Could not get thumbnail." }
 ```
 
 
@@ -134,9 +134,9 @@ Upload an item. In this case you need another part with `Content-Disposition: fo
 #### REQUEST
 
 ```
-{ 'action': 'upload',
-  'filename': '<FILENAME>',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "upload",
+  "filename": "<FILENAME>",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -144,12 +144,12 @@ Upload an item. In this case you need another part with `Content-Disposition: fo
 HTML Status Code: **201**
 
 ```
-{ 'message': 'OK.',
-  'uid': '<ITEM_UID>',
-  'name': '<ITEM_FILENAME>',
-  'mime': '<ITEM_MIMETYPE>',
-  'ext': '<ITEM_EXTENSION>',
-  'link': '<ITEM_LINK>' }
+{ "message": "OK.",
+  "uid": "<ITEM_UID>",
+  "name": "<ITEM_FILENAME>",
+  "mime": "<ITEM_MIMETYPE>",
+  "ext": "<ITEM_EXTENSION>",
+  "link": "<ITEM_LINK>" }
 ```
 
 ##### OR
@@ -157,7 +157,7 @@ HTML Status Code: **201**
 HTML Status Code: **202**
 
 ```
-{ 'message': 'Upload Failed.' }
+{ "message": "Upload Failed." }
 ```
 
 
@@ -168,9 +168,9 @@ Shorten an URL.
 #### REQUEST
 
 ```
-{ 'action': 'upload',
-  'url': '<URL>',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "upload",
+  "url": "<URL>",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -178,9 +178,9 @@ Shorten an URL.
 HTML Status Code: **201**
 
 ```
-{ 'message': 'OK.',
-  'uid': '<ITEM_UID>',
-  'link': '<ITEM_LINK>' }
+{ "message": "OK.",
+  "uid": "<ITEM_UID>",
+  "link": "<ITEM_LINK>" }
 ```
 
 ##### OR
@@ -188,7 +188,7 @@ HTML Status Code: **201**
 HTML Status Code: **202**
 
 ```
-{ 'message': 'Shortening Failed.' }
+{ "message": "Shortening Failed." }
 ```
 
 
@@ -199,9 +199,9 @@ Delete an item by its \<UID\>.
 #### REQUEST
 
 ```
-{ 'action': 'delete',
-  'uid': '<UID>',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "delete",
+  "uid": "<UID>",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -209,7 +209,7 @@ Delete an item by its \<UID\>.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.' }
+{ "message": "OK." }
 ```
 
 
@@ -222,10 +222,10 @@ Be aware that this requires the password to be sent to the API. Just the authent
 #### REQUEST
 
 ```
-{ 'action': 'edit_settings',
-  'settings': <SETTINGS_DICTIONARY>,
-  'password': '<YOUR_PASSWORD>'
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "edit_settings",
+  "settings": <SETTINGS_DICTIONARY>,
+  "password": "<YOUR_PASSWORD>"
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -233,7 +233,7 @@ Be aware that this requires the password to be sent to the API. Just the authent
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.' }
+{ "message": "OK." }
 ```
 
 ##### OR
@@ -241,7 +241,7 @@ HTML Status Code: **200**
 HTML Status Code: **202**
 
 ```
-{ 'message': 'Could not update settings. Reason: <ERROR_MESSAGE>' }
+{ "message": "Could not update settings. Reason: <ERROR_MESSAGE>" }
 ```
 
 ##### OR
@@ -249,7 +249,7 @@ HTML Status Code: **202**
 HTML Status Code: **403**
 
 ```
-{ 'message': 'Could not update settings: wrong password..' }
+{ "message": "Could not update settings: wrong password.." }
 ```
 
 
@@ -260,8 +260,8 @@ Release the current authorization token.
 #### REQUEST
 
 ```
-{ 'action': 'release_token',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "release_token",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -269,7 +269,7 @@ Release the current authorization token.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.' }
+{ "message": "OK." }
 ```
 
 
@@ -280,8 +280,8 @@ Release all authorization tokens.
 #### REQUEST
 
 ```
-{ 'action': 'release_all_tokens',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "release_all_tokens",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -289,7 +289,7 @@ Release all authorization tokens.
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.' }
+{ "message": "OK." }
 ```
 
 
@@ -300,8 +300,8 @@ Prune unused links (i.e. delete database entries for the items whose associated 
 #### REQUEST
 
 ```
-{ 'action': 'prune_unused',
-  'token': '<YOUR_AUTHENTICATION_TOKEN>' }
+{ "action": "prune_unused",
+  "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
 #### RESPONSE
@@ -309,17 +309,17 @@ Prune unused links (i.e. delete database entries for the items whose associated 
 HTML Status Code: **200**
 
 ```
-{ 'message': 'OK.'
-  'pruned': <NUMBER_OF_PRUNED_ITEMS> }
+{ "message": "OK."
+  "pruned": <NUMBER_OF_PRUNED_ITEMS> }
 ```
 
 
-If your request is badly formatted you'll get the following response:
+If your request is badly formatted you"ll get the following response:
 
 HTML Status Code: **400**
 
 ```
-{ 'message': 'Badly Formatted Request.' }
+{ "message": "Badly Formatted Request." }
 ```
 
 # You may also be interested in...
