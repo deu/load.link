@@ -312,6 +312,7 @@ HTTP Status Code: **200**
   "pruned": <NUMBER_OF_PRUNED_ITEMS> }
 ```
 
+## *Badly formatted requests*
 
 If your request is badly formatted you"ll get the following response:
 
