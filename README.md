@@ -30,7 +30,7 @@ Get an authentication token to be used with other requests.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
@@ -39,7 +39,7 @@ HTML Status Code: **200**
 
 ##### OR
 
-HTML Status Code: **403**
+HTTP Status Code: **403**
 
 ```
 { "message": "Access Denied." }
@@ -61,7 +61,7 @@ Get \<LIMIT\> links starting from \<OFFSET\>.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
@@ -87,7 +87,7 @@ Get the \<TOTAL\> number of items.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
@@ -107,7 +107,7 @@ Get the thumbnail (base64 encoded) of an image item.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
@@ -119,7 +119,7 @@ HTML Status Code: **200**
 
 ##### OR
 
-HTML Status Code: **202**
+HTTP Status Code: **202**
 
 ```
 { "message": "Could not get thumbnail." }
@@ -140,7 +140,7 @@ Upload an item. In this case you need another part with `Content-Disposition: fo
 
 #### RESPONSE
 
-HTML Status Code: **201**
+HTTP Status Code: **201**
 
 ```
 { "message": "OK.",
@@ -153,7 +153,7 @@ HTML Status Code: **201**
 
 ##### OR
 
-HTML Status Code: **202**
+HTTP Status Code: **202**
 
 ```
 { "message": "Upload Failed." }
@@ -174,7 +174,7 @@ Shorten an URL.
 
 #### RESPONSE
 
-HTML Status Code: **201**
+HTTP Status Code: **201**
 
 ```
 { "message": "OK.",
@@ -184,7 +184,7 @@ HTML Status Code: **201**
 
 ##### OR
 
-HTML Status Code: **202**
+HTTP Status Code: **202**
 
 ```
 { "message": "Shortening Failed." }
@@ -205,7 +205,7 @@ Delete an item by its \<UID\>.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK." }
@@ -229,7 +229,7 @@ Be aware that this requires the password to be sent to the API. Just the authent
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK." }
@@ -237,7 +237,7 @@ HTML Status Code: **200**
 
 ##### OR
 
-HTML Status Code: **202**
+HTTP Status Code: **202**
 
 ```
 { "message": "Could not update settings. Reason: <ERROR_MESSAGE>" }
@@ -245,7 +245,7 @@ HTML Status Code: **202**
 
 ##### OR
 
-HTML Status Code: **403**
+HTTP Status Code: **403**
 
 ```
 { "message": "Could not update settings: wrong password." }
@@ -265,7 +265,7 @@ Release the current authentication token.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK." }
@@ -285,7 +285,7 @@ Release all authentication tokens.
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK." }
@@ -305,7 +305,7 @@ Prune unused links (i.e. delete database entries for the items whose associated 
 
 #### RESPONSE
 
-HTML Status Code: **200**
+HTTP Status Code: **200**
 
 ```
 { "message": "OK."
@@ -315,7 +315,7 @@ HTML Status Code: **200**
 
 If your request is badly formatted you"ll get the following response:
 
-HTML Status Code: **400**
+HTTP Status Code: **400**
 
 ```
 { "message": "Badly Formatted Request." }
