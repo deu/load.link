@@ -65,12 +65,12 @@ HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
-  [ { "uid": "<ITEM_UID>",
-      "path": "<ITEM_PATH>",
-      "name": "<ITEM_NAME>",
-      "ext": "<ITEM_EXTENSION>",
-      "mime": "<ITEM_MIMETYPE>" },
-    ... ] }
+  "links": [ { "uid": "<ITEM_UID>",
+               "path": "<ITEM_PATH>",
+               "name": "<ITEM_NAME>",
+               "ext": "<ITEM_EXTENSION>",
+               "mime": "<ITEM_MIMETYPE>" },
+             ... ] }
 ```
 
 
