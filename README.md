@@ -11,7 +11,7 @@ Everything. Updates coming soon. Maybe.
 # API
 
 Every function is accessible from the HTTP/JSON API.
-- All requests must be sent to `api.php`
+- All requests must be sent to the API route: `/api` if you're using a PATH routing mode or `?api` if you're using GET.
 - All requests must be of `Content-Type: multipart/form-data`
 - All requests must have a header part with `Content-Disposition: form-data; name="headers"` for the actual JSON request.
 
