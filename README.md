@@ -254,7 +254,7 @@ HTML Status Code: **403**
 
 ## release_token
 
-Release the current authorization token.
+Release the current authentication token.
 
 #### REQUEST
 
@@ -274,7 +274,7 @@ HTML Status Code: **200**
 
 ## release_all_tokens
 
-Release all authorization tokens.
+Release all authentication tokens.
 
 #### REQUEST
 
