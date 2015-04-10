@@ -41,7 +41,7 @@ class API
             {
                 $this->setResponse(200, array(
                     'message' => 'OK.',
-                    'token' => $auth->getToken()));
+                    'token' => $this->auth->getToken()));
             }
             else
             {
