@@ -102,6 +102,7 @@ Get the thumbnail (base64 encoded) of an image item.
 
 ```
 { "action": "get_thumbnail",
+  "uid": <UID>,
   "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
