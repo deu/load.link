@@ -11,7 +11,7 @@ Everything. Updates coming soon. Maybe.
 # API
 
 Every function is accessible from the HTTP/JSON API.
-- All requests must be sent to the API route: `/api` if you're using the PATH routing mode or `?api` if you're using GET.
+- All requests must be POSTed to the API route: `/api` if you're using the PATH routing mode or `?api` if you're using GET.
 - All requests must be of `Content-Type: multipart/form-data`
 - All requests must have a header part with `Content-Disposition: form-data; name="headers"` for the actual JSON request.
 
@@ -65,12 +65,12 @@ HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
-  [ { "uid": "<ITEM_UID>",
-      "path": "<ITEM_PATH>",
-      "name": "<ITEM_NAME>",
-      "ext": "<ITEM_EXTENSION>",
-      "mime": "<ITEM_MIMETYPE>" },
-    ... ] }
+  "links": [ { "uid": "<ITEM_UID>",
+               "path": "<ITEM_PATH>",
+               "name": "<ITEM_NAME>",
+               "ext": "<ITEM_EXTENSION>",
+               "mime": "<ITEM_MIMETYPE>" },
+             ... ] }
 ```
 
 
@@ -312,6 +312,7 @@ HTTP Status Code: **200**
   "pruned": <NUMBER_OF_PRUNED_ITEMS> }
 ```
 
+## *Badly formatted requests*
 
 If your request is badly formatted you"ll get the following response:
 
