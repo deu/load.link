@@ -36,8 +36,8 @@ class API
         if ($this->headers['action'] == 'get_token')
         {
             if ($this->auth->authorizeFromLogin(
-                $this->headers['login']['username'],
-                $this->headers['login']['password']))
+                $this->headers['username'],
+                $this->headers['password']))
             {
                 $this->setResponse(200, array(
                     'message' => 'OK.',
@@ -86,12 +86,10 @@ class API
                 {
                     $this->setResponse(200, array(
                         'message' => 'OK.',
-                        'thumbnail' => array(
-                            'data' => base64_encode($thumbnail['data']),
-                            'width' => $thumbnail['width'],
-                            'height' => $thumbnail['height'],
-                            'mime' => $thumbnail['mime']
-                        )
+                        'data' => base64_encode($thumbnail['data']),
+                        'width' => $thumbnail['width'],
+                        'height' => $thumbnail['height'],
+                        'mime' => $thumbnail['mime']
                     ));
                 }
                 else

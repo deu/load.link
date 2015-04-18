@@ -222,7 +222,12 @@ function update_gallery_listeners()
 			{
 				case 200:
 					var response = JSON.parse(this.response);
-					var thumbnail = response.thumbnail;
+					var thumbnail = {
+                        data: response.data,
+                        width: response.width,
+                        height: response.height,
+                        mime: response.mime
+                    };
 					item.insertAdjacentHTML('beforeend',
 						generate_item_content(uid, name, mime, ext, thumbnail));
                     var closebutton = item.getElementsByClassName(

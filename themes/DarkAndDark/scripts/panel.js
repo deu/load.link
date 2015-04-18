@@ -64,11 +64,12 @@ function uploadMessage(response, text)
 		switch (this.status)
 		{
 			case 200:
-				var thumbnail = JSON.parse(this.response).thumbnail;
+				var thumbnail_response = JSON.parse(this.response);
 
-				src = 'data:' + thumbnail.mime + ';base64,' + thumbnail.data;
-				width = thumbnail.width;
-				height = thumbnail.height;
+				src = 'data:' + thumbnail_response.mime + ';base64,'
+                    + thumbnail_response.data;
+				width = thumbnail_response.width;
+				height = thumbnail_response.height;
 
 				setMessage('notice', text + '<br>'
 					+ '<a href="' + response.link + '" '

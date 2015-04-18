@@ -24,8 +24,8 @@ Get an authentication token to be used with other requests.
 
 ```
 { "action": "get_token",
-  "login": { "username": "<YOUR_USERNAME>",
-             "password": "<YOUR_PASSWORD>" } }
+  "username": "<YOUR_USERNAME>",
+  "password": "<YOUR_PASSWORD>" }
 ```
 
 #### RESPONSE
@@ -112,10 +112,10 @@ HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
-  "thumbnail": { "data": "<BASE64_ENCODED_THUMBNAIL>",
-                 "width": "<THUMBNAIL_WIDTH>",
-                 "height": "<THUMBNAIL_HEIGHT>",
-                 "mime": "<THUMBNAIL_MIMETYPE>" } }
+  "data": "<BASE64_ENCODED_THUMBNAIL>",
+  "width": "<THUMBNAIL_WIDTH>",
+  "height": "<THUMBNAIL_HEIGHT>",
+  "mime": "<THUMBNAIL_MIMETYPE>" }
 ```
 
 ##### OR
