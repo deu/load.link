@@ -2,10 +2,14 @@
 
 Easily upload files (and paste things, and shorten URLs) to your HTTP server and share them with your friends using a nice link.
 
-
 ## Work in progress
 
 Everything. Updates coming soon. Maybe.
+
+## You may also be interested in...
+
+- If you want to make a client and you (rightfully) like Python you may be interested in [115100/ll_functions](https://github.com/115100/ll_functions), a (kind-of-)library that implements all of the API calls.
+- If you like Go or (rightfully) hate PHP you should take a look at [moshee/airlift](https://github.com/moshee/airlift). Also his CLI client has a cooler progress bar.
 
 
 # API
@@ -24,8 +28,8 @@ Get an authentication token to be used with other requests.
 
 ```
 { "action": "get_token",
-  "username": "<YOUR_USERNAME>",
-  "password": "<YOUR_PASSWORD>" }
+  "login": { "username": "<YOUR_USERNAME>",
+             "password": "<YOUR_PASSWORD>" } }
 ```
 
 #### RESPONSE
@@ -102,7 +106,6 @@ Get the thumbnail (base64 encoded) of an image item.
 
 ```
 { "action": "get_thumbnail",
-  "uid": <UID>,
   "token": "<YOUR_AUTHENTICATION_TOKEN>" }
 ```
 
@@ -112,10 +115,10 @@ HTTP Status Code: **200**
 
 ```
 { "message": "OK.",
-  "data": "<BASE64_ENCODED_THUMBNAIL>",
-  "width": "<THUMBNAIL_WIDTH>",
-  "height": "<THUMBNAIL_HEIGHT>",
-  "mime": "<THUMBNAIL_MIMETYPE>" }
+  "thumbnail": { "data": "<BASE64_ENCODED_THUMBNAIL>",
+                 "width": "<THUMBNAIL_WIDTH>",
+                 "height": "<THUMBNAIL_HEIGHT>",
+                 "mime": "<THUMBNAIL_MIMETYPE>" } }
 ```
 
 ##### OR
@@ -323,6 +326,3 @@ HTTP Status Code: **400**
 { "message": "Badly Formatted Request." }
 ```
 
-# You may also be interested in...
-
-If you like Go or (rightfully) hate PHP you should take a look at [moshee/airlift](https://github.com/moshee/airlift). Also his CLI client has a cooler progress bar.
