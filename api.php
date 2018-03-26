@@ -171,7 +171,7 @@ class API
                     $config->check(FALSE);
                     $config->write();
                 }
-                catch (Error $error)
+                catch (Err $error)
                 {
                     $this->setResponse(202, array(
                         'message' => 'Could not update settings. Reason:'

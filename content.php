@@ -21,7 +21,7 @@ class Content
         /* 404 -*/
         if (!$item)
         {
-            $error = new Error(Error::NOT_FOUND);
+            $error = new Err(Err::NOT_FOUND);
             $this->page = $error->getPage();
             return;
         }
@@ -93,7 +93,7 @@ class Content
 
         if (strpos($path, '..') || !file_exists($file))
         {
-            $error = new Error(Error::NOT_FOUND);
+            $error = new Err(Err::NOT_FOUND);
             return $error->getPage();
         }
 

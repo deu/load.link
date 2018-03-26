@@ -75,7 +75,7 @@ class Uploader
     {
         if (!$this->uid)
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'UID not found.');
         }
 

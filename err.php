@@ -3,14 +3,14 @@
  * View the LICENSE file for full license information.
  **/
 
-class Error extends Exception
+class Err extends Exception
 {
     const FATAL = 'error fatal';
     const FORBIDDEN = 'error forbidden';
     const NOT_FOUND = 'error not_found';
     const WARNING = 'error warning';
     protected static $default_title = array(
-        self::FATAL => 'Error',
+        self::FATAL => 'Err',
         self::FORBIDDEN => 'Access Denied',
         self::NOT_FOUND => 'Not Found',
         self::WARNING => 'Warning',

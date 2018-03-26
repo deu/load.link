@@ -262,19 +262,19 @@ class Config
     {
         if ($this->ini['database']['name'] == '')
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'Database name too short.');
         }
 
         if ($this->ini['link']['length'] < 4)
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'Link length must be at least 4.');
         }
 
         if ($this->ini['link']['characters'] == '')
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'No link characters specified.');
         }
 
@@ -291,26 +291,26 @@ class Config
         if (in_array($this->ini['routing']['panel'],
             Router::getReservedRoutes()))
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'Custom panel route URL reserved. Choose another one.');
         }
 
         if (in_array($this->ini['routing']['homepage'],
             Router::getReservedRoutes()))
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'Custom homepage route URL reserved. Choose another one.');
         }
 
         if ($this->ini['login']['username'] == '')
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'You must choose a username.');
         }
 
         if ($this->ini['login']['password'] == '')
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'You must chooose a password.');
         }
     }

@@ -165,7 +165,7 @@ class Router
                     }
                     else
                     {
-                        $error = new Error(Error::FORBIDDEN,
+                        $error = new Err(Err::FORBIDDEN,
                             'Access Denied', NULL, FALSE);
                         $this->page = $error->getPage();
                     }
@@ -186,7 +186,7 @@ class Router
         }
         else
         {
-            $error = new Error(Error::NOT_FOUND);
+            $error = new Err(Err::NOT_FOUND);
             return $error->getPage();
         }
     }

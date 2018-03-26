@@ -163,7 +163,7 @@ class Page
         {
             if (!file_exists($this->file['path']))
             {
-                $error = new Error(Error::NOT_FOUND);
+                $error = new Err(Err::NOT_FOUND);
                 $error->getPage()->render();
                 exit();
             }

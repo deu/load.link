@@ -41,7 +41,7 @@ class DB
 
         if (!$this->dbh)
         {
-            $error = new Error(Error::FATAL,
+            $error = new Err(Err::FATAL,
                 'Could not connect to database "' . $dsn . '".');
             $error->getPage()->render();
             exit();
@@ -258,14 +258,14 @@ class DB
     {
         if (file_exists($filename))
         {
-            throw new Error(Error::FATAL,
+            throw new Err(Err::FATAL,
                 'Database "' . $filename . '" already exists.');
         }
         else
         {
             if (!new SQLite3($filename))
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Could not create database "' . $filename . '".');
             }
         }
@@ -278,7 +278,7 @@ class DB
             if ($this->dbh->query('SELECT 1 FROM '
                 . $this->conf['table_prefix'] . 'links'))
             {
-                throw new Error(Error::FATAL, 'Already installed.');
+                throw new Err(Err::FATAL, 'Already installed.');
             }
         }
         catch(Exception $e)

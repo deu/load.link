@@ -33,7 +33,7 @@ class Installer
     {
         if (Config::exists())
         {
-            $error = new Error(Error::FATAL, 'Already installed.');
+            $error = new Err(Err::FATAL, 'Already installed.');
             $error->getPage()->render();
             exit();
         }
@@ -211,7 +211,7 @@ class Installer
     {
         if ($_SESSION['uuid'] != $_POST['uuid'])
         {
-            new Error(Error::FATAL, 'Session expired. Try to reload.');
+            new Err(Err::FATAL, 'Session expired. Try to reload.');
             exit();
         }
         unset($_POST['uuid']);
@@ -258,13 +258,13 @@ class Installer
 
             DB::get()->install();
         }
-        catch (Error $error)
+        catch (Err $error)
         {
             $abort = $error;
         }
         catch (Exception $e)
         {
-            $abort = new Error(Error::FATAL,
+            $abort = new Err(Err::FATAL,
                 'Could not install. Check your configuration.');
         }
 

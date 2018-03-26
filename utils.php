@@ -35,33 +35,33 @@ class Utils
             $test_file = fopen($test_path, 'w');
             if (!$test_file)
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Permissions error in "' . $path . '": could not create.');
             }
             if (!fwrite($test_file, $test_contents))
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Permissions error in "' . $path . '": could not write.');
             }
             if (!fclose($test_file))
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Permissions error in "' . $path . '": could not close.');
             }
             if (!rename($test_path, $test2_path))
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Permissions error in "' . $path . '": could not rename.');
             }
             $test_file_contents = file_get_contents($test2_path);
             if ($test_file_contents != $test_contents)
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Permissions error in "' . $path . '": could not read.');
             }
             if (!unlink($test2_path))
             {
-                throw new Error(Error::FATAL,
+                throw new Err(Err::FATAL,
                     'Permissions error in "' . $path . '": could not delete.');
             }
         }
