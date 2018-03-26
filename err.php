@@ -10,7 +10,7 @@ class Err extends Exception
     const NOT_FOUND = 'error not_found';
     const WARNING = 'error warning';
     protected static $default_title = array(
-        self::FATAL => 'Err',
+        self::FATAL => 'Error',
         self::FORBIDDEN => 'Access Denied',
         self::NOT_FOUND => 'Not Found',
         self::WARNING => 'Warning',
