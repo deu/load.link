@@ -5,7 +5,7 @@ SCSS_VERSION="0.1.1"
 JSQUEEZE_VERSION="1.0.5"
 PRISMJS_VERSION="4160c577691b74223f3b5515bb920236b96a87e1"
 VIDEOJS_VERSION="4.10.2"
-FAENZA_ICONS_URL="https://faenza-icon-theme.googlecode.com/files/faenza-icon-theme_1.3.zip"
+FAENZA_ICONS_URL="http://slackware.uk/sbosrcarch/by-md5/e/9/e9bd6106d13017ce06d24b586259ae9c/faenza-icon-theme_1.3.zip"
 
 mkdir tmp
 cd tmp
@@ -66,6 +66,7 @@ cd ..
 # Faenza icons
 mkdir ${THEME_STATIC_PATH}/faenzaicons
 wget ${FAENZA_ICONS_URL} -O faenza_icons.zip
+md5sum faenza_icons.zip | grep 'e9bd6106d13017ce06d24b586259ae9c' || exit 1
 mkdir faenza_icons
 cd faenza_icons
 unzip ../faenza_icons.zip
