@@ -5,9 +5,9 @@
 
 class Utils
 {
-    public static function detectMime($path)
+    public static function detectMime($path, $ext = '')
     {
-        switch (pathinfo($path, PATHINFO_EXTENSION))
+        switch ($ext)
         {
             case 'css':
                 return 'text/css';
