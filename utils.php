@@ -13,6 +13,8 @@ class Utils
                 return 'text/css';
             case 'js':
                 return 'application/javascript';
+            case 'opus':
+                return 'audio/opus';
         }
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
