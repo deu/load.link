@@ -14,7 +14,7 @@ class Utils
             case 'js':
                 return 'application/javascript';
             case 'opus':
-                return 'audio/opus';
+                return 'audio/ogg; codecs=opus';
         }
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
