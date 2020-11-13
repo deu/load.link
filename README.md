@@ -17,7 +17,7 @@ Everything. Updates coming soon. Maybe.
 Every function is accessible from the HTTP/JSON API.
 - All requests must be POSTed to the API route: `/api` if you're using the PATH routing mode or `?api` if you're using GET.
 - All requests must be of `Content-Type: multipart/form-data`
-- All requests must have a header part with `Content-Disposition: form-data; name="headers"` for the actual JSON request.
+- All requests must have a header part with `Content-Disposition: form-data; name="headers"; filename="headers"` for the actual JSON request.
 
 
 ## get_token
@@ -28,8 +28,8 @@ Get an authentication token to be used with other requests.
 
 ```
 { "action": "get_token",
-  "login": { "username": "<YOUR_USERNAME>",
-             "password": "<YOUR_PASSWORD>" } }
+  "username": "<YOUR_USERNAME>",
+  "password": "<YOUR_PASSWORD>" }
 ```
 
 #### RESPONSE
@@ -132,7 +132,7 @@ HTTP Status Code: **202**
 
 ## upload
 
-Upload an item. In this case you need another part with `Content-Disposition: form-data; name="data"` for the actual file data.
+Upload an item. In this case you need another part with `Content-Disposition: form-data; name="data"; filename="data"` for the actual file data.
 
 #### REQUEST
 
@@ -326,3 +326,32 @@ HTTP Status Code: **400**
 { "message": "Badly Formatted Request." }
 ```
 
+# Alternative Upload Method
+
+Alternatively files may be uploaded by sending a `Content-Type: multipart/form-data` request to the main API endpoint with a single part in this format:
+
+```
+Content-Disposition: form-data; name="file"; filename="<FILENAME>"
+
+<PAYLOAD>
+```
+
+The request will need to provide an `Authorization: Bearer <YOUR_AUTHENTICATION_TOKEN>` header.
+
+#### RESPONSE
+
+HTTP Status Code: **201**
+
+Payload: `<ITEM_LINK>`
+
+##### OR
+
+HTTP Status Code: **202**
+
+Payload: `Upload Failed.`
+
+##### OR
+
+HTTP Status Code: **403**
+
+Payload: `Access Denied.`
