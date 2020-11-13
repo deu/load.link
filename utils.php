@@ -5,14 +5,16 @@
 
 class Utils
 {
-    public static function detectMime($path)
+    public static function detectMime($path, $ext = '')
     {
-        switch (pathinfo($path, PATHINFO_EXTENSION))
+        switch ($ext)
         {
             case 'css':
                 return 'text/css';
             case 'js':
                 return 'application/javascript';
+            case 'opus':
+                return 'audio/ogg; codecs=opus';
         }
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
