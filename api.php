@@ -14,9 +14,18 @@ class API
 
     public function __construct()
     {
+        $this->auth = new Auth();
+
         try
         {
-            @$this->parse();
+            if (isset($_FILES['file']))
+            {
+                @$this->file_upload($_FILES['file']);
+            }
+            else
+            {
+                @$this->parse();
+            }
         }
         catch (Exception $e)
         {
@@ -26,12 +35,32 @@ class API
         }
     }
 
+    protected function file_upload($file)
+    {
+        if (!$this->auth->authorizeFromBearerAuthHeader())
+        {
+            $this->setRawResponse(403, "Access Denied.");
+            return;
+        }
+
+        $this->filePath = $file['tmp_name'];
+
+        $upload = new Uploader($file['name'], $this->filePath);
+
+        if ($upload->upload())
+        {
+            $this->SetRawResponse(201, $upload->getLink());
+        }
+        else
+        {
+            $this->setRawResponse(202, "Upload Failed.");
+        }
+    }
+
     protected function parse()
     {
         $this->headers = json_decode(
             file_get_contents($_FILES['headers']['tmp_name']), TRUE);
-
-        $this->auth = new Auth();
 
         if ($this->headers['action'] == 'get_token')
         {
@@ -217,6 +246,14 @@ class API
         $this->page->setResponseCode($code);
         $this->page->addHeader('Content-Type: application/json');
         $this->page->setBuffer(json_encode($items));
+    }
+
+    protected function setRawResponse($code, $data)
+    {
+        $this->page = new Page();
+        $this->page->setResponseCode($code);
+        $this->page->addHeader('Content-Type: text/plain');
+        $this->page->setBuffer($data);
     }
 
     public function getPage()

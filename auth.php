@@ -60,6 +60,20 @@ class Auth
         return FALSE;
     }
 
+    public function authorizeFromBearerAuthHeader()
+    {
+        if (isset($_SERVER['HTTP_AUTHORIZATION']))
+        {
+            if (DB::get()->getSession(substr($_SERVER["HTTP_AUTHORIZATION"], 7)))
+            {
+                $this->token = $_SERVER['HTTP_AUTHORIZATION'];
+                $this->isAuthorized = TRUE;
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
     public function authorizeFromLogin($username, $password)
     {
         if ($username == Config::get()->getValue('login', 'username')
